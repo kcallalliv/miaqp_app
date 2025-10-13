@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/postcss";
+
+/* === Tokens MIAQP === */
+@theme {
+  --color-miaqp-blue: #2B7A9C;
+  --color-miaqp-blue-600: #246882; /* hover */
+  --color-miaqp-dark: #333333;
+  --color-miaqp-bg: #FAFAFA;
+}
+
+/* Base: usa @layer base para @apply */
+@layer base {
+  html, body {
+    @apply bg-[--color-miaqp-bg] text-[--color-miaqp-dark];
+  }
+}
+
+/* Componentes: usa @layer components para @apply */
+@layer components {
+  .btn-primary {
+    @apply bg-[--color-miaqp-blue] text-white font-semibold px-4 py-2 rounded-lg hover:bg-[--color-miaqp-blue-600] transition;
+  }
+}
