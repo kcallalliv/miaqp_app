@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useCart } from "./CartProvider";
 import { formatPrice } from "@/lib/format";
+import { whatsappUrl, orderMessage } from "@/lib/whatsapp";
 import {
   CloseIcon,
   PlusIcon,
@@ -10,31 +12,11 @@ import {
   CartIcon,
 } from "@/components/ui/icons";
 
-// En la Etapa 3 este número y el checkout con pasarela se configuran por entorno.
-const WHATSAPP_NUMBER = "51999999999";
-
 export function CartDrawer() {
   const { isOpen, close, lines, count, total, increment, decrement, remove } =
     useCart();
 
-  function whatsappHref(): string {
-    if (!lines.length)
-      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-        "Hola CAVI STORE, quisiera hacer un pedido.",
-      )}`;
-    const detail = lines
-      .map(
-        (l) =>
-          `• ${l.qty}× ${l.brand} ${l.name}` +
-          `${l.size ? ` (Talla ${l.size})` : ""}` +
-          `${l.color ? ` [${l.color}]` : ""} — ${formatPrice(l.price)}`,
-      )
-      .join("\n");
-    const msg = `Hola CAVI STORE, quiero comprar:\n${detail}\n\nTotal estimado: ${formatPrice(
-      total,
-    )}`;
-    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-  }
+  const whatsappHref = whatsappUrl(orderMessage(lines, total));
 
   return (
     <>
@@ -162,11 +144,11 @@ export function CartDrawer() {
                 {formatPrice(total)}
               </span>
             </div>
-            <button className="btn-volt w-full">
+            <Link href="/checkout" onClick={close} className="btn-volt w-full">
               Ir al checkout
-            </button>
+            </Link>
             <a
-              href={whatsappHref()}
+              href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-ghost mt-2 w-full"
@@ -175,7 +157,7 @@ export function CartDrawer() {
               Pedir por WhatsApp
             </a>
             <p className="mt-3 text-center text-[11px] text-[--color-muted]">
-              Envíos a nivel nacional · Pago seguro (próximamente)
+              Envíos a nivel nacional · Pago seguro con Culqi
             </p>
           </footer>
         )}

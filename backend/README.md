@@ -51,13 +51,28 @@ productos reales de Medusa (con ISR cada 60 s).
   inventario real, el storefront usa automáticamente el stock del almacén.
 - Moneda **PEN**; los precios están en unidades mayores (soles), como espera
   Medusa v2.
-- Los módulos de **pago** (Culqi/Izipay/Mercado Pago) se integran en la Etapa 3.
+## Pagos con Culqi
+
+El provider de pago **Culqi** está en `src/modules/culqi` y se registra en
+`medusa-config.ts` dentro del módulo de pagos. Se activa automáticamente cuando
+`CULQI_SECRET_KEY` está presente en `.env`:
+
+```
+CULQI_SECRET_KEY=sk_test_xxx
+CULQI_PUBLIC_KEY=pk_test_xxx
+```
+
+El storefront tokeniza la tarjeta con Culqi Checkout y el token llega al provider
+en la autorización (`authorizePayment`), que crea el cargo en Culqi. También
+implementa captura y reembolsos. Los webhooks se cablearán en una iteración
+posterior.
 
 ## Estructura
 
 ```
 backend/
-  medusa-config.ts        Config del servidor (DB, CORS, admin)
-  src/scripts/
-    seed-cavi.ts          Seed autocontenido del catálogo CAVI
+  medusa-config.ts        Config del servidor (DB, CORS, admin, pagos)
+  src/
+    modules/culqi/        Provider de pago Culqi (service + index)
+    scripts/seed-cavi.ts  Seed autocontenido del catálogo CAVI
 ```

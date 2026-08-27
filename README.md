@@ -15,8 +15,11 @@ Stack: **Next.js 15** (App Router) · **React 19** · **Tailwind CSS v4** ·
   seed del catálogo CAVI) y capa de integración del storefront con la Store API
   (`lib/medusa`, `lib/catalog.ts`). Si Medusa no está configurado, el storefront
   cae automáticamente al catálogo mock (demo).
-- **Etapa 3 — Pagos + WhatsApp:** pasarela (Culqi/Izipay/Mercado Pago) y canal
-  de venta asistida por WhatsApp.
+- **Etapa 3 — Pagos + WhatsApp ✅:** checkout con **Culqi** (página `/checkout`,
+  Culqi Checkout en el cliente + ruta `/api/checkout` que crea el cargo; **modo
+  demo** sin claves) y canal **WhatsApp** (número real configurable, botón
+  flotante y CTA en el carrito). Provider de pago Culqi para Medusa en
+  `backend/src/modules/culqi`.
 - **Etapa 4 — Infraestructura GCP:** Cloud Run, Cloud SQL, Redis, CI/CD.
 - **Etapa 5 — Data Warehouse:** Datastream → BigQuery, dbt, dashboards en
   Looker Studio.
@@ -29,9 +32,13 @@ app/                 Rutas y layout (App Router)
   layout.tsx         Fuentes, providers globales, header/footer/carrito
   page.tsx           Home
   globals.css        Design system CAVI (tokens de color, tipografía, utilidades)
+app/
+  checkout/page.tsx  Página de checkout (Culqi + resumen de pedido)
+  api/checkout/      Ruta server que crea el cargo en Culqi (demo sin claves)
 components/
-  site/              Header, Hero, MetricsTicker, CategoryGrid, ValueProps, Footer
+  site/              Header, Hero, MetricsTicker, CategoryGrid, ValueProps, Footer, WhatsAppFab
   shop/              Shop (filtros), ProductCard, ProductVisual
+  checkout/          useCulqi (carga Culqi Checkout v4)
   cart/              CartProvider (Context + localStorage), CartDrawer
   ui/                Iconos, Logo, Rating
 lib/
@@ -50,6 +57,21 @@ lib/
 2. Copia `.env.example` a `.env.local` y completa `MEDUSA_BACKEND_URL`,
    `MEDUSA_PUBLISHABLE_KEY` y `MEDUSA_REGION_ID` con lo que imprime el seed.
 3. Reinicia el storefront: ahora sirve el catálogo real (ISR cada 60 s).
+
+## Pagos con Culqi
+
+El checkout funciona en **modo demo** sin credenciales (pago simulado). Para
+cobrar de verdad, añade a `.env.local` del storefront:
+
+```
+NEXT_PUBLIC_CULQI_PUBLIC_KEY=pk_test_xxx   # clave pública (cliente)
+CULQI_SECRET_KEY=sk_test_xxx               # clave privada (servidor)
+```
+
+Con la clave pública, `/checkout` abre **Culqi Checkout** para tokenizar la
+tarjeta; la ruta `POST /api/checkout` usa la clave privada para crear el cargo.
+Para el flujo completo dentro de Medusa (órdenes), el backend incluye el provider
+`culqi` (`backend/src/modules/culqi`), que se activa con `CULQI_SECRET_KEY`.
 
 ## Desarrollo local
 
@@ -72,5 +94,5 @@ gcloud run deploy cavi-store --source . --region us-central1 --allow-unauthentic
 - El carrito se persiste en `localStorage` (`cavi.cart.v1`).
 - Los visuales de producto son placeholders generados por CSS hasta integrar la
   fotografía real del catálogo.
-- El número de WhatsApp (`components/cart/CartDrawer.tsx`) y el checkout con
-  pasarela se configurarán por variables de entorno en la Etapa 3.
+- El número de WhatsApp se configura con `NEXT_PUBLIC_WHATSAPP_NUMBER`
+  (por defecto `51966538608`) y se centraliza en `lib/whatsapp.ts`.

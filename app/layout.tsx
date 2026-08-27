@@ -5,6 +5,7 @@ import { CartProvider } from "@/components/cart/CartProvider";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { WhatsAppFab } from "@/components/site/WhatsAppFab";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -44,6 +45,7 @@ export default function RootLayout({
           <main>{children}</main>
           <Footer />
           <CartDrawer />
+          <WhatsAppFab />
         </CartProvider>
       </body>
     </html>
