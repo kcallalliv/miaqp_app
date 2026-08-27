@@ -39,8 +39,8 @@ RUN groupadd --system --gid 1001 nodejs \
 # Output standalone: server.js + node_modules mínimos
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-# public/ es opcional; se copia si existe (patrón que no rompe el build)
-COPY --from=builder --chown=nextjs:nodejs /app/publi[c] ./public
+# Archivos estáticos públicos (robots.txt, etc.)
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 USER nextjs
 EXPOSE 8080
