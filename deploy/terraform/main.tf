@@ -12,6 +12,8 @@ locals {
     "compute.googleapis.com",
     "vpcaccess.googleapis.com",
     "redis.googleapis.com",
+    "bigquery.googleapis.com",
+    "datastream.googleapis.com",
   ]
 
   db_name   = "cavi_store"
@@ -316,6 +318,19 @@ resource "google_cloud_run_v2_service" "storefront" {
       env {
         name  = "MEDUSA_BACKEND_URL"
         value = google_cloud_run_v2_service.backend.uri
+      }
+      # Analítica → BigQuery (usa el token del metadata server, sin claves).
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+      env {
+        name  = "BQ_EVENTS_DATASET"
+        value = google_bigquery_dataset.raw.dataset_id
+      }
+      env {
+        name  = "BQ_EVENTS_TABLE"
+        value = google_bigquery_table.raw_events.table_id
       }
       dynamic "env" {
         for_each = local.storefront_secret_env

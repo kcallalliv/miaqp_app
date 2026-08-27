@@ -24,14 +24,17 @@ Stack: **Next.js 15** (App Router) · **React 19** · **Tailwind CSS v4** ·
   backend), IaC con **Terraform** (`deploy/terraform`: Artifact Registry, Cloud
   SQL, Secret Manager, Cloud Run x2, job de migraciones, Redis opcional) y CI/CD
   con **Cloud Build** en `southamerica-west1`. Runbook en `deploy/README.md`.
-- **Etapa 5 — Data Warehouse:** Datastream → BigQuery, dbt, dashboards en
-  Looker Studio.
+- **Etapa 5 — Data Warehouse ✅:** tracking de eventos (`lib/analytics.ts` →
+  `/api/events` → BigQuery), datasets + Datastream en Terraform, proyecto **dbt**
+  (`warehouse/dbt`: staging + marts de ventas/clientes/funnel/abandono) y guía de
+  dashboards en Looker Studio. Detalle en `warehouse/README.md`.
 
 ## Estructura
 
 ```
 backend/             Backend Medusa v2 (Store API, seed del catálogo) — ver backend/README.md
 deploy/              Infra GCP: Terraform + Cloud Build + runbook (deploy/README.md)
+warehouse/           Data warehouse: proyecto dbt + guía BigQuery (warehouse/README.md)
 Dockerfile           Imagen del storefront (Next standalone) para Cloud Run
 app/                 Rutas y layout (App Router)
   layout.tsx         Fuentes, providers globales, header/footer/carrito

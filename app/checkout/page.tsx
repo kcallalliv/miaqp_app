@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/components/cart/CartProvider";
+import { track, EVENTS } from "@/lib/analytics";
 import { useCulqi } from "@/components/checkout/useCulqi";
 import { isCulqiEnabled } from "@/lib/culqi";
 import { formatPrice } from "@/lib/format";
@@ -46,6 +47,18 @@ export default function CheckoutPage() {
 
   const shipping = total >= SHIPPING_FREE_FROM || total === 0 ? 0 : SHIPPING_COST;
   const grandTotal = total + shipping;
+
+  // begin_checkout una sola vez cuando hay items.
+  const beganRef = useRef(false);
+  useEffect(() => {
+    if (!beganRef.current && lines.length > 0) {
+      beganRef.current = true;
+      track(EVENTS.BEGIN_CHECKOUT, {
+        value: grandTotal,
+        quantity: lines.reduce((a, b) => a + b.qty, 0),
+      });
+    }
+  }, [lines.length, grandTotal]);
 
   const valid = useMemo(
     () =>
@@ -101,6 +114,13 @@ export default function CheckoutPage() {
         tokenId = result.tokenId;
       }
       const data = await charge(tokenId);
+      track(EVENTS.PURCHASE, {
+        value: grandTotal,
+        currency: "PEN",
+        quantity: lines.reduce((a, b) => a + b.qty, 0),
+        chargeId: data.chargeId,
+        demo: data.demo,
+      });
       setDone({ chargeId: data.chargeId, demo: data.demo });
       clear();
     } catch (e) {

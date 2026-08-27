@@ -22,3 +22,8 @@ output "run_service_account" {
   value       = google_service_account.run.email
   description = "Service account de runtime de Cloud Run."
 }
+
+output "bigquery_datasets" {
+  value       = [google_bigquery_dataset.raw.dataset_id, google_bigquery_dataset.staging.dataset_id, google_bigquery_dataset.marts.dataset_id]
+  description = "Datasets del data warehouse."
+}

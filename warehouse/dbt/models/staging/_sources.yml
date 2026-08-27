@@ -1,0 +1,28 @@
+version: 2
+
+sources:
+  # Tablas de Medusa replicadas por Datastream desde Cloud SQL al dataset `raw`.
+  # Los nombres/columnas siguen el esquema de Medusa v2; ajusta si tu Datastream
+  # aplica un prefijo o si cambias el set de columnas replicadas.
+  - name: medusa
+    schema: raw
+    description: "Réplica CDC de la base operacional de Medusa (Cloud SQL)."
+    tables:
+      - name: order
+        description: "Órdenes."
+      - name: order_line_item
+        description: "Líneas de cada orden."
+      - name: customer
+        description: "Clientes."
+      - name: product
+        description: "Productos (metadata: sport, brand, gender…)."
+      - name: product_variant
+        description: "Variantes (talla)."
+
+  # Eventos de comportamiento web, insertados por /api/events.
+  - name: web
+    schema: raw
+    tables:
+      - name: raw_events
+        description: "Eventos del storefront (add_to_cart, purchase, etc.)."
+        loaded_at_field: occurred_at

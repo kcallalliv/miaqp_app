@@ -10,6 +10,7 @@ import {
 } from "react";
 import type { CartLine, Product } from "@/lib/types";
 import { cartKey } from "@/lib/utils";
+import { track, EVENTS } from "@/lib/analytics";
 
 interface CartContextValue {
   lines: CartLine[];
@@ -82,6 +83,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       };
     });
     setIsOpen(true);
+    track(EVENTS.ADD_TO_CART, {
+      productId: p.id,
+      sport: p.sport,
+      brand: p.brand,
+      value: p.price * qty,
+      quantity: qty,
+    });
   }
 
   function increment(key: string) {

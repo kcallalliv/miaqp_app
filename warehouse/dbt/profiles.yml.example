@@ -1,0 +1,13 @@
+# Copia a ~/.dbt/profiles.yml (o usa DBT_PROFILES_DIR). No lo subas al repo.
+cavi:
+  target: prod
+  outputs:
+    prod:
+      type: bigquery
+      method: oauth # o service-account con keyfile
+      project: "TU_PROJECT_ID"
+      dataset: "marts" # dataset por defecto de escritura
+      location: "southamerica-west1"
+      threads: 4
+      priority: interactive
+      # keyfile: /ruta/al/service-account.json   # si method: service-account

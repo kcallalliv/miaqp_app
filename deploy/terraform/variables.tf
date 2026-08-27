@@ -70,6 +70,12 @@ variable "enable_redis" {
   description = "Provisiona Memorystore (Redis) + VPC connector para Medusa."
 }
 
+variable "enable_datastream" {
+  type        = bool
+  default     = false
+  description = "Provisiona el stream CDC Cloud SQL → BigQuery (requiere configurar conectividad y logical decoding; ver warehouse/README.md)."
+}
+
 variable "deletion_protection" {
   type        = bool
   default     = true
