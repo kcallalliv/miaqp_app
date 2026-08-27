@@ -3,16 +3,21 @@ import { MetricsTicker } from "@/components/site/MetricsTicker";
 import { CategoryGrid } from "@/components/site/CategoryGrid";
 import { ValueProps } from "@/components/site/ValueProps";
 import { Shop } from "@/components/shop/Shop";
-import { PRODUCTS } from "@/lib/products";
+import { getCatalog } from "@/lib/catalog";
 
-export default function HomePage() {
+// ISR: la página se regenera cuando hay backend Medusa detrás.
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const { products, source } = await getCatalog();
+
   return (
     <>
       <Hero />
       <MetricsTicker />
       <CategoryGrid />
       <ValueProps />
-      <Shop products={PRODUCTS} />
+      <Shop products={products} demo={source === "mock"} />
     </>
   );
 }

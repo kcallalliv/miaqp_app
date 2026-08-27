@@ -31,6 +31,8 @@ export interface Product {
   /** Accento de color para el placeholder visual (hasta tener fotos reales) */
   accent: string;
   featured?: boolean;
+  /** URL de imagen real (proveniente de Medusa); opcional en la Etapa 2 */
+  thumbnail?: string;
 }
 
 export interface CartLine {

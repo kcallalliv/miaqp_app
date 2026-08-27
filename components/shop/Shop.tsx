@@ -32,7 +32,13 @@ function inBand(price: number, band: PriceBand): boolean {
   }
 }
 
-export function Shop({ products }: { products: Product[] }) {
+export function Shop({
+  products,
+  demo = false,
+}: {
+  products: Product[];
+  demo?: boolean;
+}) {
   const [search, setSearch] = useState("");
   const [sport, setSport] = useState<Sport | "all">("all");
   const [brand, setBrand] = useState<string>("all");
@@ -79,6 +85,13 @@ export function Shop({ products }: { products: Product[] }) {
           {filtered.length} de {products.length} productos
         </p>
       </div>
+
+      {demo && (
+        <p className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[--color-graphite] bg-[--color-anthracite] px-3 py-1.5 text-xs text-[--color-muted]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#FFD43B]" />
+          Catálogo de demostración · conéctate a Medusa para datos reales
+        </p>
+      )}
 
       {/* Chips de deporte */}
       <div className="no-scrollbar mt-6 flex gap-2 overflow-x-auto pb-1">
