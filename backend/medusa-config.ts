@@ -14,6 +14,12 @@ loadEnv(process.env.NODE_ENV || "development", process.cwd());
 export default defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
+    // El socket de Cloud SQL no soporta SSL; se desactiva explícitamente.
+    // (El tipo de Medusa no admite `ssl: false`, pero pg sí; de ahí el cast.)
+    // Para una BD que sí requiera SSL, exporta DATABASE_SSL=true.
+    databaseDriverOptions: (process.env.DATABASE_SSL === "true"
+      ? { connection: { ssl: { rejectUnauthorized: false } } }
+      : { connection: { ssl: false } }) as Record<string, unknown>,
     redisUrl: process.env.REDIS_URL,
     http: {
       storeCors: process.env.STORE_CORS || "http://localhost:3000",
