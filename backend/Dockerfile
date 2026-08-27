@@ -16,8 +16,12 @@ RUN npm run build
 # --- Runner ---
 FROM node:22-slim AS runner
 WORKDIR /app
+# HOME apunta a una carpeta escribible: el CLI de Medusa (configstore) escribe
+# ahí su configuración/telemetría. Sin esto falla con EACCES en /home/medusa.
 ENV NODE_ENV=production \
-    PORT=9000
+    PORT=9000 \
+    HOME=/home/medusa \
+    MEDUSA_DISABLE_TELEMETRY=true
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends dumb-init \
@@ -27,10 +31,11 @@ RUN apt-get update \
 COPY --from=builder /app/.medusa/server ./
 RUN npm install --omit=dev
 
-# Usuario sin privilegios
+# Usuario sin privilegios, con carpeta home creada y escribible.
 RUN groupadd --system --gid 1001 medusa \
-    && useradd --system --uid 1001 --gid medusa medusa \
-    && chown -R medusa:medusa /app
+    && useradd --system --uid 1001 --gid medusa --create-home --home-dir /home/medusa medusa \
+    && mkdir -p /home/medusa/.config \
+    && chown -R medusa:medusa /app /home/medusa
 USER medusa
 
 EXPOSE 9000
