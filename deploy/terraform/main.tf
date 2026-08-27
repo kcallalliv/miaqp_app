@@ -80,7 +80,8 @@ resource "google_sql_database_instance" "pg" {
 
   settings {
     tier              = var.db_tier
-    availability_type = "ZONAL" # sube a REGIONAL para alta disponibilidad
+    edition           = "ENTERPRISE" # el tier db-custom-* pertenece a esta edición
+    availability_type = "ZONAL"      # sube a REGIONAL para alta disponibilidad
     disk_type         = "PD_SSD"
     disk_size         = 10
     disk_autoresize   = true
