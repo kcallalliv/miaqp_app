@@ -4,7 +4,12 @@ loadEnv(process.env.NODE_ENV || "development", process.cwd());
 
 /**
  * Configuración del backend Medusa v2 para CAVI STORE.
- * Incluye el provider de pago Culqi (Etapa 3).
+ *
+ * Usa los módulos por defecto de Medusa (incluye el módulo de pagos con el
+ * provider de sistema/manual). El provider de pago Culqi está en
+ * `providers-wip/culqi` y se integrará como módulo aquí cuando existan
+ * credenciales de Culqi y se pueda probar contra un Medusa en ejecución.
+ * Mientras tanto, el storefront cobra con Culqi por su propia ruta.
  */
 export default defineConfig({
   projectConfig: {
@@ -21,31 +26,4 @@ export default defineConfig({
   admin: {
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
   },
-  modules: [
-    {
-      resolve: "@medusajs/medusa/payment",
-      options: {
-        providers: [
-          // Provider de pago local (efectivo/manual), útil en desarrollo.
-          {
-            resolve: "@medusajs/medusa/payment-system",
-            id: "system",
-          },
-          // Provider Culqi (solo se activa si hay CULQI_SECRET_KEY).
-          ...(process.env.CULQI_SECRET_KEY
-            ? [
-                {
-                  resolve: "./src/modules/culqi",
-                  id: "culqi",
-                  options: {
-                    secretKey: process.env.CULQI_SECRET_KEY,
-                    publicKey: process.env.CULQI_PUBLIC_KEY,
-                  },
-                },
-              ]
-            : []),
-        ],
-      },
-    },
-  ],
 });

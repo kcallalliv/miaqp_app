@@ -53,26 +53,21 @@ productos reales de Medusa (con ISR cada 60 s).
   Medusa v2.
 ## Pagos con Culqi
 
-El provider de pago **Culqi** está en `src/modules/culqi` y se registra en
-`medusa-config.ts` dentro del módulo de pagos. Se activa automáticamente cuando
-`CULQI_SECRET_KEY` está presente en `.env`:
+Hoy los pagos con Culqi se procesan desde el **storefront** (Culqi Checkout +
+ruta `/api/checkout`), que ya funciona de forma independiente.
 
-```
-CULQI_SECRET_KEY=sk_test_xxx
-CULQI_PUBLIC_KEY=pk_test_xxx
-```
-
-El storefront tokeniza la tarjeta con Culqi Checkout y el token llega al provider
-en la autorización (`authorizePayment`), que crea el cargo en Culqi. También
-implementa captura y reembolsos. Los webhooks se cablearán en una iteración
-posterior.
+El borrador del provider de pago Culqi para Medusa está en `providers-wip/culqi`
+(fuera del build). Se integrará como módulo en `medusa-config.ts` cuando existan
+credenciales de Culqi y se pueda validar contra un Medusa en ejecución
+(implica ajustar los tipos a la interfaz `AbstractPaymentProvider` de esta
+versión de Medusa).
 
 ## Estructura
 
 ```
 backend/
-  medusa-config.ts        Config del servidor (DB, CORS, admin, pagos)
+  medusa-config.ts        Config del servidor (DB, CORS, admin)
   src/
-    modules/culqi/        Provider de pago Culqi (service + index)
     scripts/seed-cavi.ts  Seed autocontenido del catálogo CAVI
+  providers-wip/culqi/    Borrador del provider de pago Culqi (no se compila)
 ```
