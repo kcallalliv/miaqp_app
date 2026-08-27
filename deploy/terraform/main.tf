@@ -214,6 +214,12 @@ resource "google_cloud_run_v2_service" "backend" {
         name  = "NODE_ENV"
         value = "production"
       }
+      # El socket de Cloud SQL no usa SSL; desactivarlo evita
+      # "server does not support SSL connections".
+      env {
+        name  = "PGSSLMODE"
+        value = "disable"
+      }
       env {
         name  = "STORE_CORS"
         value = "*"
@@ -280,6 +286,10 @@ resource "google_cloud_run_v2_job" "migrate" {
         volume_mounts {
           name       = "cloudsql"
           mount_path = "/cloudsql"
+        }
+        env {
+          name  = "PGSSLMODE"
+          value = "disable"
         }
         env {
           name = "DATABASE_URL"
