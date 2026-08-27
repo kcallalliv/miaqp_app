@@ -1,24 +1,198 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/postcss";
 
-/* === Tokens MIAQP === */
+/* ============================================================
+   CAVI STORE — Design System
+   Estética: dark premium, endurance, performance deportivo.
+   ============================================================ */
+
 @theme {
-  --color-miaqp-blue: #2B7A9C;
-  --color-miaqp-blue-600: #246882; /* hover */
-  --color-miaqp-dark: #333333;
-  --color-miaqp-bg: #FAFAFA;
+  /* --- Superficies --- */
+  --color-carbon: #0b0d0e; /* fondo principal */
+  --color-anthracite: #15191c; /* fondo secundario */
+  --color-surface: #202529; /* cards y componentes */
+  --color-surface-2: #1a1e21; /* variación de card */
+
+  /* --- Marca --- */
+  --color-volt: #b8ff32; /* verde eléctrico (principal) */
+  --color-volt-hover: #9fe01f; /* verde lima (hover/acentos) */
+
+  /* --- Texto --- */
+  --color-ink: #f7f7f5; /* texto principal */
+  --color-muted: #a7adb2; /* texto secundario */
+
+  /* --- Líneas --- */
+  --color-graphite: #343a3f; /* bordes y divisores */
+  --color-graphite-soft: #2a3035;
+
+  /* --- Tipografía (variables inyectadas por next/font) --- */
+  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* --- Radios --- */
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  /* --- Sombra de glow marca --- */
+  --shadow-volt: 0 0 0 1px rgba(184, 255, 50, 0.25),
+    0 8px 30px -8px rgba(184, 255, 50, 0.35);
 }
 
-/* Base: usa @layer base para @apply */
 @layer base {
-  html, body {
-    @apply bg-[--color-miaqp-bg] text-[--color-miaqp-dark];
+  * {
+    border-color: var(--color-graphite);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-carbon);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: var(--color-volt);
+    color: var(--color-carbon);
+  }
+
+  /* Scrollbar sutil, coherente con el dark theme */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-carbon);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-graphite);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-graphite-soft);
   }
 }
 
-/* Componentes: usa @layer components para @apply */
 @layer components {
-  .btn-primary {
-    @apply bg-[--color-miaqp-blue] text-white font-semibold px-4 py-2 rounded-lg hover:bg-[--color-miaqp-blue-600] transition;
+  /* Botón CTA principal — verde eléctrico */
+  .btn-volt {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--color-volt);
+    color: var(--color-carbon);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 0.8rem 1.4rem;
+    border-radius: 0.75rem;
+    transition: background 0.15s ease, transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .btn-volt:hover {
+    background: var(--color-volt-hover);
+    box-shadow: var(--shadow-volt);
+    transform: translateY(-1px);
+  }
+
+  /* Botón secundario — outline */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid var(--color-graphite);
+    color: var(--color-ink);
+    font-weight: 600;
+    padding: 0.8rem 1.4rem;
+    border-radius: 0.75rem;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-volt);
+    background: rgba(184, 255, 50, 0.06);
+  }
+
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-graphite);
+    border-radius: var(--radius-2xl);
+  }
+
+  /* Etiqueta técnica tipo métrica deportiva */
+  .metric-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .container-cavi {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+}
+
+@layer utilities {
+  .text-gradient-volt {
+    background: linear-gradient(
+      100deg,
+      var(--color-volt),
+      var(--color-volt-hover)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Grid técnico de fondo (líneas sutiles) */
+  .bg-grid {
+    background-image: linear-gradient(
+        to right,
+        rgba(52, 58, 63, 0.35) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, rgba(52, 58, 63, 0.35) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
