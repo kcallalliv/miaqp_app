@@ -13,7 +13,7 @@ steps:
     args:
       - build
       - "-t"
-      - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$SHORT_SHA"
+      - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$BUILD_ID"
       - "-t"
       - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:latest"
       - "backend"
@@ -30,7 +30,7 @@ steps:
       - "-c"
       - |
         gcloud run jobs update ${_MIGRATE_JOB} \
-          --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$SHORT_SHA \
+          --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$BUILD_ID \
           --region=${_REGION} --quiet
         gcloud run jobs execute ${_MIGRATE_JOB} --region=${_REGION} --wait
 
@@ -41,14 +41,14 @@ steps:
       - run
       - deploy
       - "${_SERVICE}"
-      - "--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$SHORT_SHA"
+      - "--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$BUILD_ID"
       - "--region=${_REGION}"
       - "--platform=managed"
       - "--port=9000"
       - "--quiet"
 
 images:
-  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$SHORT_SHA"
+  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$BUILD_ID"
   - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:latest"
 
 options:

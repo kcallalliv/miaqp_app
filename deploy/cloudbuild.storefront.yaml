@@ -14,7 +14,7 @@ steps:
     args:
       - build
       - "-t"
-      - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:$SHORT_SHA"
+      - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:$BUILD_ID"
       - "-t"
       - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:latest"
       - "--build-arg"
@@ -34,13 +34,13 @@ steps:
       - run
       - deploy
       - "${_SERVICE}"
-      - "--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:$SHORT_SHA"
+      - "--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:$BUILD_ID"
       - "--region=${_REGION}"
       - "--platform=managed"
       - "--quiet"
 
 images:
-  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:$SHORT_SHA"
+  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:$BUILD_ID"
   - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:latest"
 
 options:

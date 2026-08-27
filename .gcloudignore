@@ -1,0 +1,16 @@
+# Qué NO subir como contexto a Cloud Build (acelera el upload).
+.git
+node_modules
+**/node_modules
+.next
+**/.next
+.medusa
+# Terraform (plugins pesados y estado)
+**/.terraform
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+# No se necesitan para construir las imágenes
+deploy
+warehouse
+*.log
