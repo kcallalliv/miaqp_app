@@ -1,0 +1,55 @@
+# CI/CD del backend Medusa → Artifact Registry → Cloud Run (+ migraciones)
+# Ejecutar:  gcloud builds submit --config deploy/cloudbuild.backend.yaml \
+#              --substitutions=_REGION=southamerica-west1
+substitutions:
+  _REGION: southamerica-west1
+  _REPO: cavi
+  _SERVICE: cavi-backend
+  _MIGRATE_JOB: cavi-migrate
+
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - "-t"
+      - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$SHORT_SHA"
+      - "-t"
+      - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:latest"
+      - "backend"
+
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args: ["push", "--all-tags", "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend"]
+
+  # Actualiza la imagen del job de migraciones y lo ejecuta.
+  - id: migrate
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: bash
+    args:
+      - "-c"
+      - |
+        gcloud run jobs update ${_MIGRATE_JOB} \
+          --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$SHORT_SHA \
+          --region=${_REGION} --quiet
+        gcloud run jobs execute ${_MIGRATE_JOB} --region=${_REGION} --wait
+
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - "${_SERVICE}"
+      - "--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$SHORT_SHA"
+      - "--region=${_REGION}"
+      - "--platform=managed"
+      - "--port=9000"
+      - "--quiet"
+
+images:
+  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:$SHORT_SHA"
+  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/backend:latest"
+
+options:
+  logging: CLOUD_LOGGING_ONLY

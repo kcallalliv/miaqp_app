@@ -1,0 +1,47 @@
+# CI/CD del storefront → Artifact Registry → Cloud Run
+# Ejecutar:  gcloud builds submit --config deploy/cloudbuild.storefront.yaml \
+#              --substitutions=_REGION=southamerica-west1,_CULQI_PUBLIC_KEY=pk_...
+substitutions:
+  _REGION: southamerica-west1
+  _REPO: cavi
+  _SERVICE: cavi-storefront
+  _WHATSAPP: "51966538608"
+  _CULQI_PUBLIC_KEY: "" # pk_... (público, se hornea en el bundle)
+
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - "-t"
+      - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:$SHORT_SHA"
+      - "-t"
+      - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:latest"
+      - "--build-arg"
+      - "NEXT_PUBLIC_WHATSAPP_NUMBER=${_WHATSAPP}"
+      - "--build-arg"
+      - "NEXT_PUBLIC_CULQI_PUBLIC_KEY=${_CULQI_PUBLIC_KEY}"
+      - "."
+
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args: ["push", "--all-tags", "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront"]
+
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - "${_SERVICE}"
+      - "--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:$SHORT_SHA"
+      - "--region=${_REGION}"
+      - "--platform=managed"
+      - "--quiet"
+
+images:
+  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:$SHORT_SHA"
+  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/storefront:latest"
+
+options:
+  logging: CLOUD_LOGGING_ONLY

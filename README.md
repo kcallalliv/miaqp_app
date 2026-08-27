@@ -20,7 +20,10 @@ Stack: **Next.js 15** (App Router) · **React 19** · **Tailwind CSS v4** ·
   demo** sin claves) y canal **WhatsApp** (número real configurable, botón
   flotante y CTA en el carrito). Provider de pago Culqi para Medusa en
   `backend/src/modules/culqi`.
-- **Etapa 4 — Infraestructura GCP:** Cloud Run, Cloud SQL, Redis, CI/CD.
+- **Etapa 4 — Infraestructura GCP ✅:** Dockerfiles productivos (storefront y
+  backend), IaC con **Terraform** (`deploy/terraform`: Artifact Registry, Cloud
+  SQL, Secret Manager, Cloud Run x2, job de migraciones, Redis opcional) y CI/CD
+  con **Cloud Build** en `southamerica-west1`. Runbook en `deploy/README.md`.
 - **Etapa 5 — Data Warehouse:** Datastream → BigQuery, dbt, dashboards en
   Looker Studio.
 
@@ -28,6 +31,8 @@ Stack: **Next.js 15** (App Router) · **React 19** · **Tailwind CSS v4** ·
 
 ```
 backend/             Backend Medusa v2 (Store API, seed del catálogo) — ver backend/README.md
+deploy/              Infra GCP: Terraform + Cloud Build + runbook (deploy/README.md)
+Dockerfile           Imagen del storefront (Next standalone) para Cloud Run
 app/                 Rutas y layout (App Router)
   layout.tsx         Fuentes, providers globales, header/footer/carrito
   page.tsx           Home

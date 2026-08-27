@@ -1,0 +1,17 @@
+# Copia a terraform.tfvars y completa. NO lo subas al repo (está en .gitignore).
+
+project_id    = "cavi-store-prod"        # el que crees en GCP
+region        = "southamerica-west1"
+
+db_password   = "cambia-esto-por-uno-seguro"
+jwt_secret    = "genera-uno-largo-aleatorio"
+cookie_secret = "genera-otro-largo-aleatorio"
+
+# Opcionales (déjalos vacíos hasta tenerlos):
+culqi_secret_key       = ""   # sk_...
+culqi_public_key       = ""   # pk_...
+medusa_publishable_key = ""   # pk_... (sale del seed)
+medusa_region_id       = ""   # reg_... (sale del seed)
+
+whatsapp_number = "51966538608"
+enable_redis    = false        # ponlo en true para Memorystore (tiene costo)

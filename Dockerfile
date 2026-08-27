@@ -1,32 +1,47 @@
-# --- Build ---
-FROM node:20-slim AS builder
+# syntax=docker/dockerfile:1
+# ==================================================================
+# Storefront CAVI STORE (Next.js standalone) — imagen para Cloud Run
+# ==================================================================
+
+# --- Dependencias ---
+FROM node:22-slim AS deps
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
-
-# Instala deps con lockfile si existe
 COPY package*.json ./
-RUN npm ci || npm install
+RUN npm ci
 
-# Copia el código
+# --- Build ---
+FROM node:22-slim AS builder
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Build (genera .next/standalone)
+# Las variables NEXT_PUBLIC_* se hornean en el bundle del cliente EN BUILD.
+# Las secretas/servidor (MEDUSA_*, CULQI_SECRET_KEY) se inyectan en runtime.
+ARG NEXT_PUBLIC_WHATSAPP_NUMBER=51966538608
+ARG NEXT_PUBLIC_CULQI_PUBLIC_KEY=
+ENV NEXT_PUBLIC_WHATSAPP_NUMBER=$NEXT_PUBLIC_WHATSAPP_NUMBER \
+    NEXT_PUBLIC_CULQI_PUBLIC_KEY=$NEXT_PUBLIC_CULQI_PUBLIC_KEY
 RUN npm run build
 
 # --- Runner ---
-FROM node:20-slim AS runner
+FROM node:22-slim AS runner
 WORKDIR /app
-ENV NODE_ENV=production
-ENV PORT=8080
-ENV HOST=0.0.0.0
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PORT=8080 \
+    HOSTNAME=0.0.0.0
 
-# Copia servidor standalone y assets
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-# Si tienes carpeta public, se copia; si no existe, se ignora sin romper
-#COPY --from=builder /app/public ./public 2>/dev/null || true
+# Usuario sin privilegios
+RUN groupadd --system --gid 1001 nodejs \
+    && useradd --system --uid 1001 --gid nodejs nextjs
 
+# Output standalone: server.js + node_modules mínimos
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# public/ es opcional; se copia si existe (patrón que no rompe el build)
+COPY --from=builder --chown=nextjs:nodejs /app/publi[c] ./public
+
+USER nextjs
 EXPOSE 8080
-# El standalone trae server.js en la raíz copiada
-CMD ["node","server.js"]
-
+CMD ["node", "server.js"]
