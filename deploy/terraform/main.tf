@@ -19,10 +19,10 @@ locals {
   db_name   = "cavi_store"
   db_user   = "medusa"
   conn_name = google_sql_database_instance.pg.connection_name
-  # Medusa se conecta por socket unix de Cloud SQL. Se incluye `localhost` como
-  # host marcador para que la URL sea válida (new URL); el socket real lo define
-  # el parámetro ?host=/cloudsql/...
-  database_url = "postgres://${local.db_user}:${var.db_password}@localhost/${local.db_name}?host=/cloudsql/${local.conn_name}"
+  # Medusa (MikroORM) usa `host = decodeURIComponent(url.hostname)`, así que el
+  # socket de Cloud SQL va codificado COMO host de la URL (no como ?host=).
+  # Resultado: host=/cloudsql/<conn> y puerto 5432 → socket /cloudsql/<conn>/.s.PGSQL.5432
+  database_url = "postgres://${local.db_user}:${var.db_password}@${urlencode("/cloudsql/${local.conn_name}")}:5432/${local.db_name}"
 
   # Secretos a crear con sus valores. Solo se incluyen los que tienen valor,
   # para que `terraform apply` funcione desde el día 1 (Culqi y las claves del
