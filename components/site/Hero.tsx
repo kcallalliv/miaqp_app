@@ -26,36 +26,41 @@ export function Hero() {
         <div>
           <p className="metric-chip mb-5 rounded-full border border-[--color-graphite] bg-[--color-anthracite] px-3 py-1 text-[--color-volt]">
             <BoltIcon className="h-3 w-3" />
-            Performance store · Nacional
+            Endurance · Arequipa, Perú
           </p>
 
           <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl xl:text-7xl">
-            EQUÍPATE PARA
+            SALUD A TRAVÉS
             <br />
-            IR <span className="text-gradient-volt">MÁS LEJOS</span>
+            DEL DEPORTE.
+            <br />
+            <span className="text-gradient-volt">ROMPE TUS LÍMITES.</span>
           </h1>
 
           <p className="mt-6 max-w-lg text-lg text-[--color-muted]">
-            Equipamiento técnico de running y natación para quienes entrenan con
-            objetivos. Marcas de élite, tecnología de rendimiento y envíos a todo
-            el país.
+            Nutrición, fueling y equipamiento para endurance — del principiante al
+            atleta de élite. Cinco comunidades:{" "}
+            <span className="text-[--color-ink]">
+              Trail, Triatlón, Ruta, Aguas abiertas y Ciclismo.
+            </span>{" "}
+            Asesoría experta y despacho a todo el país.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#tienda" className="btn-volt">
-              Comprar ahora
+            <a href="#nutricion" className="btn-volt">
+              Comprar nutrición
               <ArrowRightIcon className="h-4 w-4" />
             </a>
-            <a href="#categorias" className="btn-ghost">
-              Explorar categorías
+            <a href="#comunidades" className="btn-ghost">
+              Explorar por deporte
             </a>
           </div>
 
           {/* KPIs de confianza */}
           <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-            <Stat value="+120" label="Marcas de élite" />
-            <Stat value="24-72h" label="Entrega nacional" />
-            <Stat value="4.9★" label="Valoración media" />
+            <Stat value="5" label="Comunidades endurance" />
+            <Stat value="Altura" label="Hidratación y sales" />
+            <Stat value="24-72h" label="Envío nacional" />
           </div>
         </div>
 

@@ -2,24 +2,24 @@ import { TruckIcon, ShieldIcon, ReturnIcon, BoltIcon } from "@/components/ui/ico
 
 const PROPS = [
   {
-    icon: TruckIcon,
-    title: "Envío nacional",
-    desc: "Despacho a todo el Perú en 24–72 h. Gratis desde S/300.",
-  },
-  {
     icon: ShieldIcon,
     title: "100% originales",
     desc: "Solo productos auténticos de marcas oficiales.",
   },
   {
+    icon: TruckIcon,
+    title: "Envío nacional 24–72h",
+    desc: "A todo el Perú. Gratis desde S/300.",
+  },
+  {
     icon: ReturnIcon,
-    title: "Cambios fáciles",
-    desc: "30 días para cambios y devoluciones sin complicaciones.",
+    title: "Cambios 30 días",
+    desc: "Cambios y devoluciones sin complicaciones.",
   },
   {
     icon: BoltIcon,
     title: "Asesoría experta",
-    desc: "Te ayudamos a elegir según tu deporte y objetivo.",
+    desc: "Te asesoramos por WhatsApp según tu objetivo.",
   },
 ];
 

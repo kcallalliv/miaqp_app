@@ -18,6 +18,8 @@ interface Incoming {
   path?: string;
   occurredAt?: string;
   productId?: string;
+  /** Categoría/comunidad; se guarda en la columna `sport` de BigQuery. */
+  community?: string;
   sport?: string;
   brand?: string;
   value?: number;
@@ -55,6 +57,7 @@ export async function POST(req: Request) {
     "path",
     "occurredAt",
     "productId",
+    "community",
     "sport",
     "brand",
     "value",
@@ -74,7 +77,8 @@ export async function POST(req: Request) {
     session_id: e.sessionId ?? null,
     path: e.path ?? null,
     product_id: e.productId ?? null,
-    sport: e.sport ?? null,
+    // La columna `sport` guarda la comunidad/categoría (compatibilidad de esquema).
+    sport: e.community ?? e.sport ?? null,
     brand: e.brand ?? null,
     value: typeof e.value === "number" ? e.value : null,
     currency: e.currency ?? "PEN",

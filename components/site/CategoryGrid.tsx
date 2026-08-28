@@ -1,17 +1,17 @@
-import { CATEGORIES } from "@/lib/categories";
+import { COMMUNITIES } from "@/lib/categories";
 import { ArrowRightIcon } from "@/components/ui/icons";
 
 export function CategoryGrid() {
   return (
-    <section id="categorias" className="container-cavi scroll-mt-24 py-16 md:py-24">
+    <section id="comunidades" className="container-cavi scroll-mt-24 py-16 md:py-24">
       <div className="mb-8 flex items-end justify-between">
         <div>
           <p className="metric-chip mb-2 text-[--color-volt]">
             <span className="h-1.5 w-1.5 rounded-full bg-[--color-volt]" />
-            Disciplinas
+            Comunidades endurance
           </p>
           <h2 className="font-display text-3xl font-bold md:text-4xl">
-            Elige tu terreno
+            Elige tu comunidad
           </h2>
         </div>
         <a
@@ -22,14 +22,12 @@ export function CategoryGrid() {
         </a>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {CATEGORIES.map((c, i) => (
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+        {COMMUNITIES.map((c) => (
           <a
             key={c.id}
             href="#tienda"
-            className={`group card relative flex flex-col justify-between overflow-hidden p-5 transition-all hover:border-[--color-volt]/50 ${
-              i === 0 || i === 3 ? "md:row-span-2 md:min-h-[220px]" : "min-h-[150px]"
-            }`}
+            className="group card relative flex min-h-[160px] flex-col justify-between overflow-hidden p-5 transition-all hover:border-[--color-volt]/50"
           >
             <div
               className="absolute -right-8 -top-8 h-28 w-28 rounded-full blur-2xl transition-opacity group-hover:opacity-100"

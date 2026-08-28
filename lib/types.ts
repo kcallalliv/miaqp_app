@@ -1,12 +1,14 @@
-export type Sport =
-  | "running"
-  | "ciclismo"
-  | "triatlon"
-  | "natacion"
-  | "nutricion"
-  | "tecnologia"
-  | "accesorios"
-  | "recuperacion";
+/** Las 5 comunidades de endurance (foco operativo de CAVI). */
+export type Community = "trail" | "triatlon" | "ruta" | "aguas-abiertas" | "ciclismo";
+
+/**
+ * Categoría de producto: una comunidad, la categoría transversal Nutrición
+ * (protagonista del negocio) o Accesorios.
+ */
+export type Sport = Community | "nutricion" | "accesorios";
+
+/** Modelo de venta del producto (viene de metadata.fulfillment en Medusa). */
+export type Fulfillment = "stock" | "preorder";
 
 export type Gender = "hombre" | "mujer" | "unisex";
 
@@ -15,8 +17,13 @@ export interface Product {
   slug: string;
   name: string;
   brand: string;
+  /** Categoría principal (comunidad, nutrición o accesorios). */
   sport: Sport;
+  /** Todas las categorías a las que pertenece (un gel puede estar en varias). */
+  communities: Sport[];
   gender: Gender;
+  /** "stock" (En stock) | "preorder" (Bajo pedido, se asesora por WhatsApp). */
+  fulfillment: Fulfillment;
   price: number;
   /** Precio anterior, cuando hay descuento */
   compareAtPrice?: number;
@@ -31,8 +38,18 @@ export interface Product {
   /** Accento de color para el placeholder visual (hasta tener fotos reales) */
   accent: string;
   featured?: boolean;
-  /** URL de imagen real (proveniente de Medusa); opcional en la Etapa 2 */
+  /** URL de imagen real (proveniente de Medusa); opcional */
   thumbnail?: string;
+}
+
+/** ¿Es un producto de nutrición/fueling? (categoría protagonista) */
+export function isNutrition(p: Product): boolean {
+  return p.sport === "nutricion" || p.communities.includes("nutricion");
+}
+
+/** Equipamiento caro que amerita asesoría por WhatsApp (talla/ajuste/elección). */
+export function needsAdvice(p: Product): boolean {
+  return p.fulfillment === "preorder" || p.price >= 800;
 }
 
 export interface CartLine {
@@ -45,4 +62,6 @@ export interface CartLine {
   color?: string;
   accent: string;
   qty: number;
+  /** Comunidad/categoría principal (para analítica de compra). */
+  community?: Sport;
 }

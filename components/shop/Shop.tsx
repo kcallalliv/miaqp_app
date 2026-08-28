@@ -54,16 +54,26 @@ export function Shop({
     [products],
   );
 
+  // Peso de orden: nutrición primero, luego accesorios, luego equipamiento.
+  function rank(s: string): number {
+    if (s === "nutricion") return 0;
+    if (s === "accesorios") return 1;
+    return 2;
+  }
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return products.filter((p) => {
-      if (sport !== "all" && p.sport !== sport) return false;
+    const list = products.filter((p) => {
+      if (sport !== "all" && p.sport !== sport && !p.communities.includes(sport))
+        return false;
       if (brand !== "all" && p.brand !== brand) return false;
       if (size !== "all" && !p.sizes.includes(size)) return false;
       if (!inBand(p.price, band)) return false;
       if (q && !`${p.name} ${p.brand}`.toLowerCase().includes(q)) return false;
       return true;
     });
+    // Dentro de una comunidad, muestra primero nutrición/accesorios.
+    return list.sort((a, b) => rank(a.sport) - rank(b.sport));
   }, [products, search, sport, brand, size, band]);
 
   const activeSelect =
@@ -78,7 +88,7 @@ export function Shop({
             Catálogo
           </p>
           <h2 className="font-display text-3xl font-bold md:text-4xl">
-            Equípate por deporte
+            Explora el catálogo
           </h2>
         </div>
         <p className="text-sm text-[--color-muted]">

@@ -1,16 +1,34 @@
 "use client";
 
 import type { Product } from "@/lib/types";
+import { needsAdvice, isNutrition } from "@/lib/types";
 import { formatPrice, discountPercent } from "@/lib/format";
 import { useCart } from "@/components/cart/CartProvider";
 import { ProductVisual } from "./ProductVisual";
 import { Rating } from "@/components/ui/Rating";
-import { CartIcon } from "@/components/ui/icons";
+import { CartIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { whatsappUrl, adviceMessage, preorderMessage } from "@/lib/whatsapp";
+import { track, EVENTS } from "@/lib/analytics";
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
   const off = discountPercent(product.price, product.compareAtPrice);
-  const soldOut = product.stock <= 0;
+  const preorder = product.fulfillment === "preorder";
+  const nutrition = isNutrition(product);
+
+  function trackWhatsApp(kind: "advice" | "preorder") {
+    track(kind === "preorder" ? EVENTS.PREORDER_REQUEST : EVENTS.WHATSAPP_CLICK, {
+      productId: product.id,
+      community: product.sport,
+      isNutrition: nutrition,
+      brand: product.brand,
+      source: "product",
+      value: product.price,
+    });
+  }
+
+  const preorderHref = whatsappUrl(preorderMessage(product.brand, product.name));
+  const adviceHref = whatsappUrl(adviceMessage(product.brand, product.name));
 
   return (
     <article className="card group flex flex-col overflow-hidden transition-colors hover:border-[--color-volt]/50">
@@ -32,21 +50,21 @@ export function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
-        {/* Disponibilidad */}
+        {/* Modelo de venta: stock / pre-orden */}
         <div className="absolute right-3 top-3">
           <span
             className={`metric-chip rounded-full border px-2 py-0.5 ${
-              soldOut
-                ? "border-[--color-graphite] text-[--color-muted]"
+              preorder
+                ? "border-[#FFD43B]/50 text-[#FFD43B]"
                 : "border-[--color-volt]/40 text-[--color-volt]"
             }`}
           >
             <span
               className={`h-1.5 w-1.5 rounded-full ${
-                soldOut ? "bg-[--color-muted]" : "bg-[--color-volt]"
+                preorder ? "bg-[#FFD43B]" : "bg-[--color-volt]"
               }`}
             />
-            {soldOut ? "Agotado" : "En stock"}
+            {preorder ? "Pre-orden" : "En stock"}
           </span>
         </div>
       </div>
@@ -75,20 +93,56 @@ export function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
-        <button
-          type="button"
-          disabled={soldOut}
-          onClick={() =>
-            add(product, {
-              size: product.sizes[0],
-              color: product.colors[0],
-            })
-          }
-          className="btn-volt mt-4 w-full disabled:cursor-not-allowed disabled:bg-[--color-graphite] disabled:text-[--color-muted] disabled:shadow-none"
-        >
-          <CartIcon className="h-4 w-4" />
-          {soldOut ? "Sin stock" : "Agregar al carrito"}
-        </button>
+        {preorder && (
+          <p className="mt-2 text-xs leading-snug text-[--color-muted]">
+            Bajo pedido · te asesoramos la talla por WhatsApp · entrega estimada
+            2–4 semanas.
+          </p>
+        )}
+
+        {/* CTA principal */}
+        <div className="mt-4 flex flex-col gap-2">
+          {preorder ? (
+            <a
+              href={preorderHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackWhatsApp("preorder")}
+              className="btn-volt w-full"
+            >
+              <WhatsAppIcon className="h-4 w-4" />
+              Pedir / consultar por WhatsApp
+            </a>
+          ) : (
+            <button
+              type="button"
+              onClick={() =>
+                add(product, {
+                  size: product.sizes[0],
+                  color: product.colors[0],
+                })
+              }
+              className="btn-volt w-full"
+            >
+              <CartIcon className="h-4 w-4" />
+              Agregar al carrito
+            </button>
+          )}
+
+          {/* Asesoría para equipamiento caro en stock */}
+          {!preorder && needsAdvice(product) && (
+            <a
+              href={adviceHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackWhatsApp("advice")}
+              className="btn-ghost w-full text-sm"
+            >
+              <WhatsAppIcon className="h-4 w-4 text-[--color-volt]" />
+              Consultar asesoría
+            </a>
+          )}
+        </div>
       </div>
     </article>
   );

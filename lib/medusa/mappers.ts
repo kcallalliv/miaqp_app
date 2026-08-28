@@ -1,16 +1,15 @@
-import type { Product, Sport, Gender } from "@/lib/types";
+import type { Product, Sport, Gender, Fulfillment } from "@/lib/types";
 import { CATEGORY_MAP } from "@/lib/categories";
 import type { MedusaProduct, MedusaVariant } from "./types";
 
 const SPORTS: Sport[] = [
-  "running",
-  "ciclismo",
+  "trail",
   "triatlon",
-  "natacion",
+  "ruta",
+  "aguas-abiertas",
+  "ciclismo",
   "nutricion",
-  "tecnologia",
   "accesorios",
-  "recuperacion",
 ];
 const GENDERS: Gender[] = ["hombre", "mujer", "unisex"];
 
@@ -26,13 +25,37 @@ function num(meta: Record<string, unknown> | null | undefined, key: string) {
   return undefined;
 }
 
-/** Deriva el deporte desde metadata, o desde la categoría, con fallback. */
-function resolveSport(mp: MedusaProduct): Sport {
-  const fromMeta = str(mp.metadata, "sport") as Sport | undefined;
-  if (fromMeta && SPORTS.includes(fromMeta)) return fromMeta;
-  const handle = mp.categories?.[0]?.handle as Sport | undefined;
-  if (handle && SPORTS.includes(handle)) return handle;
-  return "accesorios";
+/** Todas las categorías/comunidades del producto (por handle de categoría). */
+function resolveCommunities(mp: MedusaProduct): Sport[] {
+  const set = new Set<Sport>();
+  for (const c of mp.categories ?? []) {
+    if (SPORTS.includes(c.handle as Sport)) set.add(c.handle as Sport);
+  }
+  // Compatibilidad: metadata.community (lista separada por comas) o metadata.sport.
+  const metaList = str(mp.metadata, "community") ?? str(mp.metadata, "sport");
+  metaList
+    ?.split(",")
+    .map((s) => s.trim())
+    .forEach((s) => {
+      if (SPORTS.includes(s as Sport)) set.add(s as Sport);
+    });
+  return Array.from(set);
+}
+
+/** Categoría principal (nutrición manda si aplica; si no, la primera). */
+function resolveSport(communities: Sport[]): Sport {
+  if (communities.includes("nutricion")) return "nutricion";
+  return communities[0] ?? "accesorios";
+}
+
+/** Modelo de venta: metadata.fulfillment; por defecto según stock. */
+function resolveFulfillment(
+  mp: MedusaProduct,
+  stock: number,
+): Fulfillment {
+  const f = str(mp.metadata, "fulfillment");
+  if (f === "preorder" || f === "stock") return f;
+  return stock > 0 ? "stock" : "preorder";
 }
 
 function resolveGender(mp: MedusaProduct): Gender {
@@ -73,7 +96,8 @@ function optionValues(mp: MedusaProduct, optionTitle: string): string[] {
 
 /** Convierte un producto de la Store API de Medusa a nuestro DTO de UI. */
 export function mapMedusaProduct(mp: MedusaProduct): Product {
-  const sport = resolveSport(mp);
+  const communities = resolveCommunities(mp);
+  const sport = resolveSport(communities);
   const variants = mp.variants ?? [];
 
   // Precio mínimo entre variantes (el "desde").
@@ -120,7 +144,9 @@ export function mapMedusaProduct(mp: MedusaProduct): Product {
     name: mp.title,
     brand: str(mp.metadata, "brand") ?? "CAVI",
     sport,
+    communities: communities.length ? communities : [sport],
     gender: resolveGender(mp),
+    fulfillment: resolveFulfillment(mp, stock),
     price,
     compareAtPrice: compareAt,
     rating: num(mp.metadata, "rating") ?? 4.7,

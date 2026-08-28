@@ -79,13 +79,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
           color,
           accent: p.accent,
           qty: nextQty,
+          community: p.sport,
         },
       };
     });
     setIsOpen(true);
     track(EVENTS.ADD_TO_CART, {
       productId: p.id,
-      sport: p.sport,
+      community: p.sport,
+      isNutrition: p.sport === "nutricion" || p.communities.includes("nutricion"),
       brand: p.brand,
       value: p.price * qty,
       quantity: qty,

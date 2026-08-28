@@ -15,14 +15,21 @@ export const EVENTS = {
   ADD_TO_CART: "add_to_cart",
   BEGIN_CHECKOUT: "begin_checkout",
   PURCHASE: "purchase",
+  WHATSAPP_CLICK: "whatsapp_click",
+  PREORDER_REQUEST: "preorder_request",
 } as const;
 
 export type EventName = (typeof EVENTS)[keyof typeof EVENTS];
 
 export interface EventProps {
   productId?: string;
-  sport?: string;
+  /** Categoría principal (comunidad o nutrición). */
+  community?: string;
+  /** Marca "nutricion" del producto/pedido para segmentar fueling. */
+  isNutrition?: boolean;
   brand?: string;
+  /** Origen del click de WhatsApp: "fab" | "product" | "cart" | "checkout". */
+  source?: string;
   value?: number;
   currency?: string;
   quantity?: number;

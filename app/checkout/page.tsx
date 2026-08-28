@@ -118,6 +118,8 @@ export default function CheckoutPage() {
         value: grandTotal,
         currency: "PEN",
         quantity: lines.reduce((a, b) => a + b.qty, 0),
+        isNutrition: lines.some((l) => l.community === "nutricion"),
+        communities: Array.from(new Set(lines.map((l) => l.community).filter(Boolean))),
         chargeId: data.chargeId,
         demo: data.demo,
       });

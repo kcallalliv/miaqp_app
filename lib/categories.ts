@@ -1,4 +1,4 @@
-import type { Sport } from "./types";
+import type { Sport, Community } from "./types";
 
 export interface Category {
   id: Sport;
@@ -7,51 +7,63 @@ export interface Category {
   /** Métrica deportiva característica, como detalle técnico */
   metric: string;
   accent: string;
+  /** ¿Es una de las 5 comunidades de endurance? */
+  community: boolean;
 }
 
-/** Deportes destacados: la tienda se especializa en running y natación. */
+/**
+ * Modelo de datos alineado a Medusa (product categories).
+ * Nutrición es la categoría PROTAGONISTA y transversal.
+ * Las 5 comunidades de endurance son el foco operativo.
+ */
 export const CATEGORIES: Category[] = [
   {
-    id: "running",
-    name: "Running",
-    tagline: "Cada zancada cuenta",
-    metric: "PACE 4:30 /km",
+    id: "nutricion",
+    name: "Nutrición",
+    tagline: "Combustible para romper tus límites",
+    metric: "60 g CHO /h",
     accent: "#B8FF32",
+    community: false,
   },
   {
-    id: "natacion",
-    name: "Natación",
-    tagline: "Desliza más rápido",
-    metric: "SWOLF 32",
-    accent: "#38D9C7",
+    id: "trail",
+    name: "Trail",
+    tagline: "La montaña es la cancha",
+    metric: "+D | 1200 m",
+    accent: "#FF7A45",
+    community: true,
   },
   {
     id: "triatlon",
     name: "Triatlón",
     tagline: "Tres disciplinas, un objetivo",
     metric: "T1 · T2 SPLIT",
-    accent: "#FF7A45",
+    accent: "#38D9C7",
+    community: true,
+  },
+  {
+    id: "ruta",
+    name: "Ruta",
+    tagline: "Cada zancada suma",
+    metric: "PACE 4:30 /km",
+    accent: "#5C7CFA",
+    community: true,
+  },
+  {
+    id: "aguas-abiertas",
+    name: "Aguas abiertas",
+    tagline: "Desliza más lejos",
+    metric: "SWOLF 32",
+    accent: "#4DABF7",
+    community: true,
   },
   {
     id: "ciclismo",
     name: "Ciclismo",
     tagline: "Potencia sostenida",
     metric: "260 W FTP",
-    accent: "#5C7CFA",
-  },
-  {
-    id: "nutricion",
-    name: "Nutrición deportiva",
-    tagline: "Combustible para rendir",
-    metric: "60 g CHO /h",
-    accent: "#FFD43B",
-  },
-  {
-    id: "tecnologia",
-    name: "Tecnología y wearables",
-    tagline: "Mide, analiza, mejora",
-    metric: "GPS · HR · PWR",
-    accent: "#B8FF32",
+    accent: "#DA77F2",
+    community: true,
   },
   {
     id: "accesorios",
@@ -59,16 +71,19 @@ export const CATEGORIES: Category[] = [
     tagline: "Los detalles marcan la diferencia",
     metric: "ESSENTIALS",
     accent: "#A7ADB2",
-  },
-  {
-    id: "recuperacion",
-    name: "Recuperación",
-    tagline: "Entrena. Recupera. Repite.",
-    metric: "HRV READY",
-    accent: "#DA77F2",
+    community: false,
   },
 ];
+
+/** Las 5 comunidades de endurance, en orden. */
+export const COMMUNITIES: Category[] = CATEGORIES.filter((c) => c.community);
+
+export const NUTRITION: Category = CATEGORIES.find((c) => c.id === "nutricion")!;
 
 export const CATEGORY_MAP: Record<Sport, Category> = Object.fromEntries(
   CATEGORIES.map((c) => [c.id, c]),
 ) as Record<Sport, Category>;
+
+export function isCommunity(id: string): id is Community {
+  return COMMUNITIES.some((c) => c.id === id);
+}

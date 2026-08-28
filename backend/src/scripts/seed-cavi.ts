@@ -31,7 +31,12 @@ interface CaviItem {
   handle: string;
   title: string;
   brand: string;
+  /** Categoría principal (comunidad, nutricion o accesorios). */
   sport: string;
+  /** Todas las categorías/comunidades (un gel puede estar en varias). */
+  communities: string[];
+  /** Modelo de venta: "stock" | "preorder". */
+  fulfillment: "stock" | "preorder";
   gender: "hombre" | "mujer" | "unisex";
   price: number;
   compareAt?: number;
@@ -45,36 +50,42 @@ interface CaviItem {
   featured?: boolean;
 }
 
+// Las 5 comunidades de endurance + Nutrición (protagonista) + Accesorios.
 const CATEGORIES: { name: string; handle: string }[] = [
-  { name: "Running", handle: "running" },
-  { name: "Natación", handle: "natacion" },
+  { name: "Nutrición", handle: "nutricion" },
+  { name: "Trail", handle: "trail" },
   { name: "Triatlón", handle: "triatlon" },
+  { name: "Ruta", handle: "ruta" },
+  { name: "Aguas abiertas", handle: "aguas-abiertas" },
   { name: "Ciclismo", handle: "ciclismo" },
-  { name: "Nutrición deportiva", handle: "nutricion" },
-  { name: "Tecnología y wearables", handle: "tecnologia" },
   { name: "Accesorios", handle: "accesorios" },
-  { name: "Recuperación", handle: "recuperacion" },
 ];
 
 const CATALOG: CaviItem[] = [
-  { handle: "nike-vaporfly-3", title: "Vaporfly 3 Carbon", brand: "Nike", sport: "running", gender: "unisex", price: 899, compareAt: 1099, rating: 4.9, reviews: 214, stock: 12, sizes: ["38", "39", "40", "41", "42", "43", "44"], colors: ["Volt", "Negro", "Blanco"], badge: "Top ventas", accent: "#B8FF32", featured: true },
-  { handle: "hoka-mach-x", title: "Mach X Speed", brand: "HOKA", sport: "running", gender: "hombre", price: 649, rating: 4.7, reviews: 132, stock: 20, sizes: ["40", "41", "42", "43", "44", "45"], colors: ["Cyan", "Negro"], badge: "Nuevo", accent: "#38D9C7", featured: true },
-  { handle: "saucony-endorphin-pro", title: "Endorphin Pro 4", brand: "Saucony", sport: "running", gender: "mujer", price: 720, compareAt: 850, rating: 4.8, reviews: 98, stock: 8, sizes: ["36", "37", "38", "39", "40"], colors: ["Coral", "Negro"], accent: "#FF7A45" },
-  { handle: "adidas-adizero-adios-pro", title: "Adizero Adios Pro 3", brand: "Adidas", sport: "running", gender: "unisex", price: 780, rating: 4.6, reviews: 156, stock: 6, sizes: ["39", "40", "41", "42", "43"], colors: ["Blanco", "Rojo"], accent: "#F7F7F5" },
-  { handle: "arena-carbon-glide", title: "Powerskin Carbon Glide", brand: "Arena", sport: "natacion", gender: "hombre", price: 1290, compareAt: 1490, rating: 4.9, reviews: 74, stock: 6, sizes: ["S", "M", "L", "XL"], colors: ["Negro/Volt", "Azul"], badge: "Competición", accent: "#38D9C7", featured: true },
-  { handle: "speedo-fastskin-goggles", title: "Fastskin Pure Focus", brand: "Speedo", sport: "natacion", gender: "unisex", price: 210, rating: 4.7, reviews: 189, stock: 34, sizes: ["Única"], colors: ["Ahumado", "Espejo"], badge: "Top ventas", accent: "#5C7CFA", featured: true },
-  { handle: "arena-cobra-ultra", title: "Cobra Ultra Swipe", brand: "Arena", sport: "natacion", gender: "unisex", price: 245, compareAt: 299, rating: 4.8, reviews: 121, stock: 18, sizes: ["Única"], colors: ["Espejo Volt", "Negro"], accent: "#B8FF32" },
-  { handle: "finis-tempo-trainer", title: "Tempo Trainer Pro", brand: "FINIS", sport: "natacion", gender: "unisex", price: 165, rating: 4.6, reviews: 63, stock: 22, sizes: ["Única"], colors: ["Amarillo"], accent: "#FFD43B" },
-  { handle: "huub-aero-tri-suit", title: "Aero Tri Suit Elite", brand: "HUUB", sport: "triatlon", gender: "hombre", price: 890, compareAt: 1050, rating: 4.7, reviews: 41, stock: 9, sizes: ["S", "M", "L", "XL"], colors: ["Negro/Volt"], badge: "Nuevo", accent: "#FF7A45" },
-  { handle: "orca-wetsuit-openwater", title: "Wetsuit Open Water 3.8", brand: "Orca", sport: "triatlon", gender: "unisex", price: 1590, rating: 4.8, reviews: 52, stock: 5, sizes: ["S", "M", "L", "XL"], colors: ["Negro"], accent: "#5C7CFA" },
-  { handle: "specialized-helmet-evade", title: "Casco Evade 3 Aero", brand: "Specialized", sport: "ciclismo", gender: "unisex", price: 1150, compareAt: 1350, rating: 4.8, reviews: 88, stock: 14, sizes: ["S", "M", "L"], colors: ["Negro", "Blanco"], badge: "Aero", accent: "#5C7CFA" },
-  { handle: "assos-mille-bib", title: "Mille GT Bib Shorts", brand: "Assos", sport: "ciclismo", gender: "hombre", price: 640, rating: 4.7, reviews: 67, stock: 16, sizes: ["S", "M", "L", "XL"], colors: ["Negro"], accent: "#A7ADB2" },
-  { handle: "maurten-gel-100", title: "Gel 100 (caja x12)", brand: "Maurten", sport: "nutricion", gender: "unisex", price: 380, compareAt: 420, rating: 4.9, reviews: 301, stock: 60, sizes: ["Caja x12"], colors: ["Neutro"], badge: "Top ventas", accent: "#FFD43B", featured: true },
-  { handle: "sis-beta-fuel", title: "Beta Fuel 80 (x15)", brand: "SiS", sport: "nutricion", gender: "unisex", price: 320, rating: 4.6, reviews: 142, stock: 40, sizes: ["Caja x15"], colors: ["Naranja", "Limón"], accent: "#FF7A45" },
-  { handle: "garmin-forerunner-965", title: "Forerunner 965 AMOLED", brand: "Garmin", sport: "tecnologia", gender: "unisex", price: 2490, compareAt: 2790, rating: 4.9, reviews: 176, stock: 7, sizes: ["47 mm"], colors: ["Negro/Volt", "Blanco"], badge: "GPS Multibanda", accent: "#B8FF32", featured: true },
-  { handle: "wahoo-tickr-hr", title: "TICKR Monitor Cardíaco", brand: "Wahoo", sport: "tecnologia", gender: "unisex", price: 290, rating: 4.7, reviews: 210, stock: 25, sizes: ["Única"], colors: ["Negro"], accent: "#FF6B6B" },
-  { handle: "flipbelt-classic", title: "Cinturón de Running FlipBelt", brand: "FlipBelt", sport: "accesorios", gender: "unisex", price: 145, rating: 4.6, reviews: 98, stock: 50, sizes: ["S", "M", "L"], colors: ["Negro", "Volt"], accent: "#B8FF32" },
-  { handle: "theragun-mini", title: "Theragun Mini Percusión", brand: "Therabody", sport: "recuperacion", gender: "unisex", price: 890, compareAt: 990, rating: 4.8, reviews: 134, stock: 11, sizes: ["Única"], colors: ["Negro"], badge: "Recovery", accent: "#DA77F2" },
+  // Nutrición (protagonista, transversal)
+  { handle: "maurten-gel-100", title: "Gel 100 (caja x12)", brand: "Maurten", sport: "nutricion", communities: ["nutricion", "ruta", "trail", "triatlon"], fulfillment: "stock", gender: "unisex", price: 380, compareAt: 420, rating: 4.9, reviews: 301, stock: 60, sizes: ["Caja x12"], colors: ["Neutro"], badge: "Top ventas", accent: "#B8FF32", featured: true },
+  { handle: "maurten-drink-mix-320", title: "Drink Mix 320 (caja x14)", brand: "Maurten", sport: "nutricion", communities: ["nutricion", "triatlon", "ciclismo"], fulfillment: "stock", gender: "unisex", price: 460, rating: 4.9, reviews: 128, stock: 34, sizes: ["Caja x14"], colors: ["Neutro"], badge: "Alta carga", accent: "#B8FF32", featured: true },
+  { handle: "sis-beta-fuel", title: "Beta Fuel 80 (caja x15)", brand: "SiS", sport: "nutricion", communities: ["nutricion", "ciclismo", "ruta"], fulfillment: "stock", gender: "unisex", price: 320, compareAt: 360, rating: 4.7, reviews: 142, stock: 40, sizes: ["Caja x15"], colors: ["Naranja", "Limón"], accent: "#FFD43B", featured: true },
+  { handle: "precision-hydration-1500", title: "PH 1500 Electrolitos (x30)", brand: "Precision", sport: "nutricion", communities: ["nutricion", "trail", "triatlon", "aguas-abiertas"], fulfillment: "stock", gender: "unisex", price: 240, rating: 4.8, reviews: 96, stock: 50, sizes: ["Sobre x30"], colors: ["Neutro"], badge: "Sales · altura", accent: "#4DABF7", featured: true },
+  { handle: "precision-gel-30", title: "PF 30 Gel (caja x12)", brand: "Precision", sport: "nutricion", communities: ["nutricion", "ruta", "trail"], fulfillment: "stock", gender: "unisex", price: 300, rating: 4.7, reviews: 71, stock: 45, sizes: ["Caja x12"], colors: ["Neutro"], accent: "#B8FF32" },
+  { handle: "sis-hydro-tabs", title: "GO Hydro Pastillas (x20)", brand: "SiS", sport: "nutricion", communities: ["nutricion", "ruta", "ciclismo"], fulfillment: "stock", gender: "unisex", price: 85, rating: 4.6, reviews: 210, stock: 120, sizes: ["Tubo x20"], colors: ["Frutos", "Limón"], badge: "Hidratación", accent: "#FFD43B" },
+  // Trail
+  { handle: "hoka-speedgoat-6", title: "Speedgoat 6 Trail", brand: "HOKA", sport: "trail", communities: ["trail"], fulfillment: "stock", gender: "unisex", price: 720, compareAt: 820, rating: 4.8, reviews: 88, stock: 12, sizes: ["39", "40", "41", "42", "43", "44"], colors: ["Naranja", "Negro"], badge: "Top ventas", accent: "#FF7A45", featured: true },
+  { handle: "salomon-adv-skin-12", title: "ADV Skin 12 Chaleco", brand: "Salomon", sport: "trail", communities: ["trail"], fulfillment: "preorder", gender: "unisex", price: 890, rating: 4.9, reviews: 41, stock: 0, sizes: ["S", "M", "L"], colors: ["Negro/Rojo"], badge: "Bajo pedido", accent: "#FF7A45" },
+  // Ruta
+  { handle: "nike-vaporfly-3", title: "Vaporfly 3 Carbon", brand: "Nike", sport: "ruta", communities: ["ruta", "triatlon"], fulfillment: "stock", gender: "unisex", price: 899, compareAt: 1099, rating: 4.9, reviews: 214, stock: 10, sizes: ["38", "39", "40", "41", "42", "43", "44"], colors: ["Volt", "Negro"], badge: "Carbono", accent: "#5C7CFA", featured: true },
+  { handle: "garmin-forerunner-965", title: "Forerunner 965 AMOLED", brand: "Garmin", sport: "ruta", communities: ["ruta", "trail", "triatlon"], fulfillment: "preorder", gender: "unisex", price: 2490, compareAt: 2790, rating: 4.9, reviews: 176, stock: 0, sizes: ["47 mm"], colors: ["Negro/Volt", "Blanco"], badge: "GPS Multibanda", accent: "#5C7CFA", featured: true },
+  // Triatlón
+  { handle: "huub-aero-trisuit", title: "Aero Trisuit Elite", brand: "HUUB", sport: "triatlon", communities: ["triatlon"], fulfillment: "preorder", gender: "hombre", price: 890, compareAt: 1050, rating: 4.7, reviews: 41, stock: 0, sizes: ["S", "M", "L", "XL"], colors: ["Negro/Volt"], badge: "Bajo pedido", accent: "#38D9C7" },
+  { handle: "orca-wetsuit-openwater", title: "Wetsuit Openwater 3.8", brand: "Orca", sport: "triatlon", communities: ["triatlon", "aguas-abiertas"], fulfillment: "preorder", gender: "unisex", price: 1590, rating: 4.8, reviews: 52, stock: 0, sizes: ["S", "M", "L", "XL"], colors: ["Negro"], badge: "Bajo pedido", accent: "#38D9C7", featured: true },
+  // Aguas abiertas
+  { handle: "arena-cobra-ultra", title: "Cobra Ultra Swipe", brand: "Arena", sport: "aguas-abiertas", communities: ["aguas-abiertas", "triatlon"], fulfillment: "stock", gender: "unisex", price: 245, compareAt: 299, rating: 4.8, reviews: 121, stock: 18, sizes: ["Única"], colors: ["Espejo Volt", "Negro"], badge: "Top ventas", accent: "#4DABF7" },
+  { handle: "orca-openwater-buoy", title: "Boya de seguridad Openwater", brand: "Orca", sport: "aguas-abiertas", communities: ["aguas-abiertas"], fulfillment: "stock", gender: "unisex", price: 180, rating: 4.6, reviews: 63, stock: 22, sizes: ["Única"], colors: ["Naranja"], accent: "#4DABF7" },
+  // Ciclismo
+  { handle: "specialized-evade-3", title: "Casco Evade 3 Aero", brand: "Specialized", sport: "ciclismo", communities: ["ciclismo", "triatlon"], fulfillment: "preorder", gender: "unisex", price: 1150, compareAt: 1350, rating: 4.8, reviews: 88, stock: 0, sizes: ["S", "M", "L"], colors: ["Negro", "Blanco"], badge: "Bajo pedido", accent: "#DA77F2" },
+  { handle: "assos-mille-bib", title: "Mille GT Bib Shorts", brand: "Assos", sport: "ciclismo", communities: ["ciclismo"], fulfillment: "stock", gender: "hombre", price: 640, rating: 4.7, reviews: 67, stock: 16, sizes: ["S", "M", "L", "XL"], colors: ["Negro"], accent: "#DA77F2" },
+  // Accesorios
+  { handle: "flipbelt-classic", title: "Cinturón FlipBelt", brand: "FlipBelt", sport: "accesorios", communities: ["accesorios", "ruta", "trail"], fulfillment: "stock", gender: "unisex", price: 145, rating: 4.6, reviews: 98, stock: 50, sizes: ["S", "M", "L"], colors: ["Negro", "Volt"], accent: "#A7ADB2" },
 ];
 
 export default async function seedCavi({ container }: ExecArgs) {
@@ -202,9 +213,10 @@ export default async function seedCavi({ container }: ExecArgs) {
     title: item.title,
     handle: item.handle,
     status: ProductStatus.PUBLISHED,
-    category_ids: catByHandle.get(item.sport)
-      ? [catByHandle.get(item.sport) as string]
-      : [],
+    // Un producto puede pertenecer a varias comunidades (nutrición transversal).
+    category_ids: item.communities
+      .map((h) => catByHandle.get(h))
+      .filter((id): id is string => Boolean(id)),
     sales_channels: [{ id: salesChannel.id }],
     options: [{ title: "Talla", values: item.sizes }],
     variants: item.sizes.map((size) => ({
@@ -217,6 +229,8 @@ export default async function seedCavi({ container }: ExecArgs) {
     metadata: {
       brand: item.brand,
       sport: item.sport,
+      community: item.communities.join(", "),
+      fulfillment: item.fulfillment,
       gender: item.gender,
       rating: item.rating,
       reviews: item.reviews,
