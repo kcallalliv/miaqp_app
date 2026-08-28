@@ -62,12 +62,24 @@ credenciales de Culqi y se pueda validar contra un Medusa en ejecución
 (implica ajustar los tipos a la interfaz `AbstractPaymentProvider` de esta
 versión de Medusa).
 
+## Panel de administración
+
+El admin de Medusa se construye con el backend (requiere `ts-node`, ya incluido)
+y se sirve en `/app`. Incluye una página custom **Agenda** para gestionar los
+eventos (`src/admin/routes/events/page.tsx`).
+
+- Habilitado por defecto (`DISABLE_MEDUSA_ADMIN=false`).
+- Requiere un usuario admin: `npx medusa user -e admin@cavi.pe -p <clave>`.
+
 ## Estructura
 
 ```
 backend/
-  medusa-config.ts        Config del servidor (DB, CORS, admin)
+  medusa-config.ts        Config del servidor (DB, CORS, admin, módulos)
   src/
-    scripts/seed-cavi.ts  Seed autocontenido del catálogo CAVI
+    modules/events/       Entidad Event (agenda) + servicio + migración
+    admin/routes/events/  UI de admin de la agenda (página custom)
+    api/                  Rutas store/admin/hooks (catálogo y eventos)
+    scripts/              Seeds (seed:cavi, seed:events)
   providers-wip/culqi/    Borrador del provider de pago Culqi (no se compila)
 ```

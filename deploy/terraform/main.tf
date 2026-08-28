@@ -220,11 +220,11 @@ resource "google_cloud_run_v2_service" "backend" {
         name  = "PGSSLMODE"
         value = "disable"
       }
-      # El panel admin no se sirve desde este contenedor (se habilitará luego);
-      # sin esto Medusa busca el build del admin y falla al arrancar.
+      # Admin habilitado: el build ahora incluye el panel (requiere ts-node en
+      # el build). Se sirve en /app; protégelo creando un usuario admin.
       env {
         name  = "DISABLE_MEDUSA_ADMIN"
-        value = "true"
+        value = "false"
       }
       env {
         name  = "STORE_CORS"
