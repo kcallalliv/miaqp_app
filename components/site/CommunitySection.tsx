@@ -1,25 +1,6 @@
 import { BoltIcon } from "@/components/ui/icons";
-
-const RACES = [
-  {
-    name: "Misti Ultra Summit",
-    place: "Arequipa · Volcán Misti",
-    tag: "Trail · Ultra",
-    accent: "#FF7A45",
-  },
-  {
-    name: "Misti SkyRace",
-    place: "Arequipa · Altura",
-    tag: "Sky · Vertical",
-    accent: "#4DABF7",
-  },
-  {
-    name: "Tu próxima meta",
-    place: "¿Corres una carrera? Cuéntanos",
-    tag: "Comunidad",
-    accent: "#B8FF32",
-  },
-];
+import { EventsAgenda } from "@/components/events/EventsAgenda";
+import type { EventItem } from "@/lib/events/types";
 
 const VOICES = [
   {
@@ -39,7 +20,13 @@ const VOICES = [
   },
 ];
 
-export function CommunitySection() {
+export function CommunitySection({
+  events,
+  eventsDemo,
+}: {
+  events: EventItem[];
+  eventsDemo?: boolean;
+}) {
   return (
     <section id="comunidad" className="container-cavi scroll-mt-24 py-16 md:py-24">
       <div className="mb-8">
@@ -56,30 +43,8 @@ export function CommunitySection() {
         </p>
       </div>
 
-      {/* Carreras locales */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {RACES.map((r) => (
-          <div key={r.name} className="card relative overflow-hidden p-5">
-            <div
-              className="absolute -right-8 -top-8 h-24 w-24 rounded-full blur-2xl"
-              style={{ background: r.accent, opacity: 0.14 }}
-            />
-            <span
-              className="metric-chip rounded-full border px-2 py-0.5"
-              style={{ borderColor: `${r.accent}55`, color: r.accent }}
-            >
-              {r.tag}
-            </span>
-            <h3 className="mt-3 font-display text-lg font-bold text-[--color-ink]">
-              {r.name}
-            </h3>
-            <p className="mt-0.5 text-sm text-[--color-muted]">{r.place}</p>
-          </div>
-        ))}
-      </div>
-
       {/* Voces de la comunidad */}
-      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {VOICES.map((v) => (
           <figure key={v.who} className="card p-5">
             <blockquote className="text-sm leading-relaxed text-[--color-ink]">
@@ -91,6 +56,9 @@ export function CommunitySection() {
           </figure>
         ))}
       </div>
+
+      {/* Agenda de eventos de endurance (Perú) */}
+      <EventsAgenda events={events} demo={eventsDemo} />
     </section>
   );
 }

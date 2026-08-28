@@ -6,12 +6,16 @@ import { ValueProps } from "@/components/site/ValueProps";
 import { Shop } from "@/components/shop/Shop";
 import { CommunitySection } from "@/components/site/CommunitySection";
 import { getCatalog } from "@/lib/catalog";
+import { getEvents } from "@/lib/events/data";
 
 // ISR: la página se regenera cuando hay backend Medusa detrás.
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const { products, source } = await getCatalog();
+  const [{ products, source }, agenda] = await Promise.all([
+    getCatalog(),
+    getEvents(),
+  ]);
 
   return (
     <>
@@ -23,7 +27,7 @@ export default async function HomePage() {
       <CategoryGrid />
       <ValueProps />
       <Shop products={products} demo={source === "mock"} />
-      <CommunitySection />
+      <CommunitySection events={agenda.events} eventsDemo={agenda.source === "mock"} />
     </>
   );
 }

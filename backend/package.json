@@ -11,6 +11,7 @@
     "dev": "medusa develop",
     "start": "medusa start",
     "seed:cavi": "medusa exec ./src/scripts/seed-cavi.ts",
+    "seed:events": "medusa exec ./src/scripts/seed-events.ts",
     "db:migrate": "medusa db:migrate",
     "db:setup": "medusa db:create && medusa db:migrate"
   },

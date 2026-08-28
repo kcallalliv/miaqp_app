@@ -32,4 +32,8 @@ export default defineConfig({
   admin: {
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
   },
+  modules: [
+    // Agenda de eventos de endurance (entidad custom Event).
+    { resolve: "./src/modules/events" },
+  ],
 });

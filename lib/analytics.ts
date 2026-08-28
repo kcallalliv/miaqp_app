@@ -17,6 +17,11 @@ export const EVENTS = {
   PURCHASE: "purchase",
   WHATSAPP_CLICK: "whatsapp_click",
   PREORDER_REQUEST: "preorder_request",
+  // Agenda de eventos (Comunidad CAVI)
+  EVENT_VIEW: "event_view",
+  EVENT_FILTER_USED: "event_filter_used",
+  INSCRIPTION_CLICK: "inscription_click",
+  EVENT_SHARE: "event_share",
 } as const;
 
 export type EventName = (typeof EVENTS)[keyof typeof EVENTS];
