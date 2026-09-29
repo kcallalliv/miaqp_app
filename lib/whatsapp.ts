@@ -14,6 +14,13 @@ export function supportMessage(): string {
   return "Hola CAVI STORE 👋, tengo una consulta.";
 }
 
+/** Asesoría proactiva (variante "smart" del experimento wa_advisory_v1). */
+export function advisoryMessage(leansNutrition = false): string {
+  return leansNutrition
+    ? "Hola CAVI STORE 👋, quiero asesoría de nutrición/hidratación para mi próxima carrera. ¿Me ayudan a armar mi plan de combustible?"
+    : "Hola CAVI STORE 👋, quiero asesoría para elegir el equipo correcto para mi objetivo. ¿Me orientan?";
+}
+
 /** Asesoría de un producto (equipamiento caro): incluye nombre y marca. */
 export function adviceMessage(brand: string, name: string): string {
   return `Hola CAVI STORE 👋, quiero asesoría para elegir/ajustar la talla de: ${brand} ${name}. ¿Me ayudan?`;

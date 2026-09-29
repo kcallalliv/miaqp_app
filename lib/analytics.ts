@@ -8,6 +8,8 @@
  * navegación) y cae a `fetch` con keepalive.
  */
 
+import { feedIntent } from "./intent";
+
 export const EVENTS = {
   PAGE_VIEW: "page_view",
   VIEW_ITEM: "view_item",
@@ -22,6 +24,9 @@ export const EVENTS = {
   EVENT_FILTER_USED: "event_filter_used",
   INSCRIPTION_CLICK: "inscription_click",
   EVENT_SHARE: "event_share",
+  // Experimentación (A/B)
+  EXPERIMENT_EXPOSURE: "experiment_exposure",
+  ADVISORY_SHOWN: "advisory_shown",
 } as const;
 
 export type EventName = (typeof EVENTS)[keyof typeof EVENTS];
@@ -61,6 +66,13 @@ function sessionId(): string {
 
 export function track(event: EventName, props: EventProps = {}): void {
   if (typeof window === "undefined") return;
+
+  // Alimenta el score de intención de sesión (heurística del experimento A/B).
+  try {
+    feedIntent(event, props);
+  } catch {
+    // la analítica nunca debe romper la navegación
+  }
 
   const body = JSON.stringify({
     event,
