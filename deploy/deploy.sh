@@ -139,10 +139,26 @@ ENV_PAIRS="MEDUSA_BACKEND_URL=${BACKEND_URL}"
 gcloud run services update cavi-storefront --region="${REGION}" \
   --update-env-vars="${ENV_PAIRS}" --quiet
 
-# --- 8. Verificación ---------------------------------------------------------
-log "8/8 · Verificación"
 STORE_URL="$(gcloud run services describe cavi-storefront --region="${REGION}" \
   --format='value(status.url)')"
+
+# --- 7.5 Seguridad: cerrar CORS a URLs reales + min-instances opcional -------
+log "7.5/8 · Endureciendo CORS del backend…"
+# STORE/AUTH: el storefront; ADMIN: el propio backend (sirve /app).
+# ^##^ define '##' como separador para que AUTH_CORS pueda llevar coma interna.
+gcloud run services update cavi-backend --region="${REGION}" --quiet \
+  --update-env-vars="^##^STORE_CORS=${STORE_URL}##AUTH_CORS=${STORE_URL},${BACKEND_URL}##ADMIN_CORS=${BACKEND_URL}" \
+  || warn "No se pudo ajustar CORS (revísalo manual si hace falta)."
+# Cold start: exporta BACKEND_MIN_INSTANCES=1 para mantener 1 instancia caliente
+# (pequeño costo fijo). Por defecto 0 (escala a cero).
+if [ "${BACKEND_MIN_INSTANCES:-0}" != "0" ]; then
+  log "   min-instances=${BACKEND_MIN_INSTANCES} en el backend…"
+  gcloud run services update cavi-backend --region="${REGION}" --quiet \
+    --min-instances="${BACKEND_MIN_INSTANCES}" || true
+fi
+
+# --- 8. Verificación ---------------------------------------------------------
+log "8/8 · Verificación"
 echo "   Backend   : ${BACKEND_URL}"
 echo "   Admin     : ${BACKEND_URL}/app   (${ADMIN_EMAIL} / ${ADMIN_PASS})"
 echo "   Storefront: ${STORE_URL}"

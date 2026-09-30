@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://cavistore.pe/sitemap.xml
+
 # CAVI STORE
