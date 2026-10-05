@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
+import { Modules } from "@medusajs/framework/utils";
 import { RECLAMOS_MODULE } from "../../../modules/reclamos";
 import type ReclamosModuleService from "../../../modules/reclamos/service";
 import {
@@ -6,6 +7,7 @@ import {
   TIPOS_BIEN,
   TIPOS_DOCUMENTO,
 } from "../../../modules/reclamos/constants";
+import { reclamoAckEmail } from "../../../lib/email-templates";
 
 const s = (v: unknown, max: number) => String(v ?? "").trim().slice(0, max);
 const inList = (v: string, list: readonly string[]) => list.includes(v);
@@ -73,6 +75,20 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       estado: "pendiente",
     },
   ]);
+
+  // Acuse por correo (no bloquea el registro si el email falla).
+  try {
+    const notificationService = req.scope.resolve(Modules.NOTIFICATION);
+    const { subject, html } = reclamoAckEmail(numero, nombre);
+    await notificationService.createNotifications({
+      to: email,
+      channel: "email",
+      template: "reclamo-ack",
+      content: { subject, html },
+    });
+  } catch {
+    // ignorar: el reclamo ya quedó registrado
+  }
 
   res.status(201).json({
     ok: true,

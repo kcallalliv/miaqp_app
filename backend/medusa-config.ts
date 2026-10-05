@@ -43,6 +43,27 @@ const fileModule = process.env.S3_BUCKET
     ]
   : [];
 
+/**
+ * Notificaciones por email (Resend). El proveedor no envía si falta
+ * RESEND_API_KEY (solo loguea), así el backend arranca igual sin credenciales.
+ */
+const notificationModule = {
+  resolve: "@medusajs/notification",
+  options: {
+    providers: [
+      {
+        resolve: "./src/modules/resend",
+        id: "resend",
+        options: {
+          channels: ["email"],
+          api_key: process.env.RESEND_API_KEY,
+          from: process.env.EMAIL_FROM || "CAVI STORE <onboarding@resend.dev>",
+        },
+      },
+    ],
+  },
+};
+
 export default defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
@@ -71,5 +92,7 @@ export default defineConfig({
     { resolve: "./src/modules/reclamos" },
     // Almacenamiento de imágenes (GCS/S3 si está configurado; si no, local).
     ...fileModule,
+    // Notificaciones por email (Resend).
+    notificationModule,
   ],
 });

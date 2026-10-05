@@ -46,6 +46,19 @@ variable "culqi_public_key" {
   description = "Clave pública de Culqi (pk_...)."
 }
 
+variable "resend_api_key" {
+  type        = string
+  sensitive   = true
+  default     = "" # Se completa cuando tengas la cuenta Resend (emails).
+  description = "API key de Resend para emails transaccionales."
+}
+
+variable "email_from" {
+  type        = string
+  default     = "CAVI STORE <onboarding@resend.dev>" # Remitente de pruebas de Resend.
+  description = "Remitente de los emails (usa un dominio verificado en Resend)."
+}
+
 variable "whatsapp_number" {
   type        = string
   default     = "51966538608"

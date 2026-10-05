@@ -38,6 +38,7 @@ locals {
     var.culqi_public_key != "" ? { "culqi-public-key" = var.culqi_public_key } : {},
     var.medusa_publishable_key != "" ? { "medusa-publishable-key" = var.medusa_publishable_key } : {},
     var.medusa_region_id != "" ? { "medusa-region-id" = var.medusa_region_id } : {},
+    var.resend_api_key != "" ? { "resend-api-key" = var.resend_api_key } : {},
   )
 
   # Env de Cloud Run que referencia secretos (solo los disponibles).
@@ -49,6 +50,7 @@ locals {
     },
     var.culqi_secret_key != "" ? { CULQI_SECRET_KEY = "culqi-secret-key" } : {},
     var.culqi_public_key != "" ? { CULQI_PUBLIC_KEY = "culqi-public-key" } : {},
+    var.resend_api_key != "" ? { RESEND_API_KEY = "resend-api-key" } : {},
   )
 
   storefront_secret_env = merge(
@@ -255,6 +257,11 @@ resource "google_cloud_run_v2_service" "backend" {
       env {
         name  = "S3_REGION"
         value = "auto"
+      }
+      # Remitente de los emails transaccionales (Resend).
+      env {
+        name  = "EMAIL_FROM"
+        value = var.email_from
       }
       env {
         name = "S3_ACCESS_KEY_ID"
