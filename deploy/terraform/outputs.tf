@@ -27,3 +27,8 @@ output "bigquery_datasets" {
   value       = [google_bigquery_dataset.raw.dataset_id, google_bigquery_dataset.staging.dataset_id, google_bigquery_dataset.marts.dataset_id]
   description = "Datasets del data warehouse."
 }
+
+output "assets_bucket" {
+  value       = google_storage_bucket.assets.name
+  description = "Bucket GCS de imágenes de producto (File Module de Medusa)."
+}

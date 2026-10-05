@@ -14,6 +14,7 @@ locals {
     "redis.googleapis.com",
     "bigquery.googleapis.com",
     "datastream.googleapis.com",
+    "storage.googleapis.com",
   ]
 
   db_name   = "cavi_store"
@@ -238,6 +239,41 @@ resource "google_cloud_run_v2_service" "backend" {
         name  = "AUTH_CORS"
         value = "*"
       }
+      # --- Imágenes en GCS (File Module vía API S3-compatible) ---
+      env {
+        name  = "S3_BUCKET"
+        value = local.s3_bucket
+      }
+      env {
+        name  = "S3_ENDPOINT"
+        value = local.s3_endpoint
+      }
+      env {
+        name  = "S3_FILE_URL"
+        value = local.s3_file_url
+      }
+      env {
+        name  = "S3_REGION"
+        value = "auto"
+      }
+      env {
+        name = "S3_ACCESS_KEY_ID"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.s3_access_key_id.secret_id
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "S3_SECRET_ACCESS_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.s3_secret_access_key.secret_id
+            version = "latest"
+          }
+        }
+      }
       dynamic "env" {
         for_each = var.enable_redis ? [1] : []
         content {
@@ -265,7 +301,11 @@ resource "google_cloud_run_v2_service" "backend" {
     ignore_changes = [template[0].containers[0].image]
   }
 
-  depends_on = [google_secret_manager_secret_version.v]
+  depends_on = [
+    google_secret_manager_secret_version.v,
+    google_secret_manager_secret_version.s3_access_key_id,
+    google_secret_manager_secret_version.s3_secret_access_key,
+  ]
 }
 
 # --- Cloud Run Job: migraciones de la BD (Medusa) ---

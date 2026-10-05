@@ -11,6 +11,38 @@ loadEnv(process.env.NODE_ENV || "development", process.cwd());
  * credenciales de Culqi y se pueda probar contra un Medusa en ejecución.
  * Mientras tanto, el storefront cobra con Culqi por su propia ruta.
  */
+/**
+ * Módulo de archivos (imágenes de producto).
+ * Si hay bucket configurado (S3_BUCKET), usa GCS/S3 para que las imágenes
+ * PERSISTAN (Cloud Run es efímero). Si no, usa almacenamiento local (dev).
+ * GCS se usa vía su API S3-compatible: endpoint + llaves HMAC.
+ */
+const fileModule = process.env.S3_BUCKET
+  ? [
+      {
+        resolve: "@medusajs/file",
+        options: {
+          providers: [
+            {
+              resolve: "@medusajs/file-s3",
+              id: "s3",
+              options: {
+                file_url: process.env.S3_FILE_URL,
+                bucket: process.env.S3_BUCKET,
+                endpoint: process.env.S3_ENDPOINT,
+                region: process.env.S3_REGION || "auto",
+                access_key_id: process.env.S3_ACCESS_KEY_ID,
+                secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
+                // GCS requiere path-style para su API S3-compatible.
+                additional_client_config: { forcePathStyle: true },
+              },
+            },
+          ],
+        },
+      },
+    ]
+  : [];
+
 export default defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
@@ -37,5 +69,7 @@ export default defineConfig({
     { resolve: "./src/modules/events" },
     // Libro de Reclamaciones digital (Perú).
     { resolve: "./src/modules/reclamos" },
+    // Almacenamiento de imágenes (GCS/S3 si está configurado; si no, local).
+    ...fileModule,
   ],
 });
