@@ -27,6 +27,9 @@ export const EVENTS = {
   // Experimentación (A/B)
   EXPERIMENT_EXPOSURE: "experiment_exposure",
   ADVISORY_SHOWN: "advisory_shown",
+  // Encargos USA
+  ENCARGO_VIEW: "encargo_view",
+  ENCARGO_RESERVE_CLICK: "encargo_reserve_click",
 } as const;
 
 export type EventName = (typeof EVENTS)[keyof typeof EVENTS];

@@ -90,6 +90,8 @@ export default defineConfig({
     { resolve: "./src/modules/events" },
     // Libro de Reclamaciones digital (Perú).
     { resolve: "./src/modules/reclamos" },
+    // Encargos desde el extranjero (personal shopper / viaje).
+    { resolve: "./src/modules/encargos" },
     // Almacenamiento de imágenes (GCS/S3 si está configurado; si no, local).
     ...fileModule,
     // Notificaciones por email (Resend).

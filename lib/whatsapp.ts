@@ -31,6 +31,11 @@ export function preorderMessage(brand: string, name: string): string {
   return `Hola CAVI STORE 👋, me interesa el producto bajo pedido: ${brand} ${name}. ¿Disponibilidad, tallas y tiempo de entrega?`;
 }
 
+/** Reserva de un encargo desde USA (50% adelanto / 50% contra entrega). */
+export function encargoMessage(titulo: string, precioFinal: string): string {
+  return `Hola CAVI STORE 👋, quiero RESERVAR este encargo desde USA: *${titulo}* (${precioFinal}). Entiendo que son 50% de adelanto y 50% contra entrega. ¿Cómo coordinamos?`;
+}
+
 /** Mensaje de pedido a partir del carrito. */
 export function orderMessage(lines: CartLine[], total: number): string {
   if (!lines.length) return "Hola CAVI STORE, quisiera hacer un pedido.";

@@ -50,5 +50,10 @@ de entorno (`S3_*`). Ver `deploy/README.md` → "Bucket de imágenes".
 - **Agenda**: eventos de endurance (curación + aprobación de envíos públicos).
 - **Inteligencia**: experimento A/B, radar de demanda y próximos eventos.
 - **Reclamaciones**: Libro de Reclamaciones (responder dentro de 15 días hábiles).
+- **Encargos USA**: productos que traes bajo pedido desde un viaje. Defines precio
+  final (PEN), comisión, precio aprox. en Perú y **cupos**; ajustas "+1 reserva"
+  conforme la gente confirma, y el estado pasa a **agotado** solo cuando no quedan
+  cupos. La tienda los muestra en `/encargos` con reserva por WhatsApp (50%/50%).
+  Si no hay encargos activos, la página muestra estado vacío (no ejemplos).
 - **Orders / Customers / Promotions / Price Lists**: pedidos, clientes, cupones y
   listas de precios (campañas) nativos de Medusa.

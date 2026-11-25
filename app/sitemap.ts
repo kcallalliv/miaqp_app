@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const routes = [
     { path: "/", priority: 1 },
+    { path: "/encargos", priority: 0.7 },
     { path: "/checkout", priority: 0.3 },
     { path: "/reclamaciones", priority: 0.4 },
     { path: "/legal/terminos", priority: 0.3 },

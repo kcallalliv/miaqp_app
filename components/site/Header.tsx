@@ -41,6 +41,12 @@ export function Header() {
               {c.name}
             </a>
           ))}
+          <a
+            href="/encargos"
+            className="inline-flex items-center gap-1 rounded-full border border-[--color-graphite] px-3 py-1 text-sm font-medium text-[--color-ink] transition-colors hover:border-[--color-volt]"
+          >
+            ✈️ Encargos USA
+          </a>
         </nav>
 
         <div className="flex items-center gap-2">

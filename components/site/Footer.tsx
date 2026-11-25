@@ -33,8 +33,8 @@ export function Footer() {
           links={[
             { label: "Envíos y entregas", href: "/legal/envios" },
             { label: "Cambios y devoluciones", href: "/legal/envios" },
+            { label: "Encargos desde USA", href: "/encargos" },
             { label: "Libro de Reclamaciones", href: "/reclamaciones" },
-            { label: "Contacto", href: "/reclamaciones" },
           ]}
         />
         <FooterCol
