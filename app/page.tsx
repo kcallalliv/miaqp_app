@@ -5,6 +5,7 @@ import { CategoryGrid } from "@/components/site/CategoryGrid";
 import { ValueProps } from "@/components/site/ValueProps";
 import { Shop } from "@/components/shop/Shop";
 import { CommunitySection } from "@/components/site/CommunitySection";
+import { EncargosTeaser } from "@/components/encargos/EncargosTeaser";
 import { getCatalog } from "@/lib/catalog";
 import { getEvents } from "@/lib/events/data";
 
@@ -27,6 +28,7 @@ export default async function HomePage() {
       <CategoryGrid />
       <ValueProps />
       <Shop products={products} demo={source === "mock"} />
+      <EncargosTeaser />
       <CommunitySection events={agenda.events} eventsDemo={agenda.source === "mock"} />
     </>
   );
